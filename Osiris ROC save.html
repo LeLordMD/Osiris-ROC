@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Osiris - ROC</title>
+  <style>
+    :root{
+      --red:#c62828;
+      --red-delivered:#d42b2b;
+      --bg:#f3f4f6;
+      --card:#ffffff;
+      --btn-border:rgba(0,0,0,0.06);
+      --shadow:rgba(16,24,40,0.06);
+      --text:#0b1020;
+      --green-light:#d9f2d9;
+      --green-strong:#2ca14b;
+      --yellow:#f2c94c;
+      --radius:12px;
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    html,body{height:100%;margin:0;}
+    body{
+      background:var(--bg);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      display:flex;
+      flex-direction:column;
+      min-height:100%;
+    }
+
+    .topbar{
+      background:var(--red);
+      padding:14px 16px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+    }
+    .topbar .back{
+      width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;background:rgba(255,255,255,0.12);cursor:pointer;color:#fff;font-weight:700;user-select:none;
+    }
+    .topbar .title{
+      flex:1;text-align:center;font-weight:800;font-size:1.8rem;color:#fff;margin-right:36px;
+    }
+
+    main{ flex:1; padding:20px; max-width:1100px; width:100%; margin:0 auto; box-sizing:border-box; }
+
+    /* Home grid only (welcome card removed as requested) */
+    .grid-main{ display:flex; flex-direction:column; gap:12px; margin-top:6px; }
+    .grid-btn{
+      background:var(--card);
+      border-radius:14px;
+      padding:18px;
+      text-align:center;
+      font-weight:800;
+      font-size:1.05rem;
+      color:var(--text);
+      cursor:pointer;
+      box-shadow:0 8px 20px rgba(16,24,40,0.06);
+      text-decoration:none;
+      display:block;
+      transition: transform .12s cubic-bezier(.2,.9,.2,1), box-shadow .12s cubic-bezier(.2,.9,.2,1);
+    }
+    .grid-btn .desc{ display:block; margin-top:8px; font-weight:600; color:#55606b; font-size:0.95rem; }
+
+    .grid-btn:hover{
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(16,24,40,0.14);
+    }
+
+    /* Submenu */
+    .submenu{ display:flex; flex-direction:column; gap:18px; }
+    .subtitle{ font-size:1.1rem; font-weight:700; color:var(--text); margin:6px 0; }
+
+    .section-title{ font-size:1rem; font-weight:800; color:#9b1e1e; margin:8px 0; }
+
+    .btn-grid{ display:grid; grid-template-columns: repeat(auto-fill,minmax(160px,1fr)); gap:10px; margin-bottom:14px; }
+
+    .small-btn{
+      background:var(--green-light);
+      border:1px solid var(--btn-border);
+      border-radius:10px;
+      padding:12px;
+      font-weight:700;
+      color:#000;
+      cursor:pointer;
+      text-align:center;
+      box-shadow:0 6px 14px rgba(0,0,0,0.04);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:8px;
+      min-height:74px;
+      transition: transform .12s cubic-bezier(.2,.9,.2,1), box-shadow .12s cubic-bezier(.2,.9,.2,1);
+    }
+    .small-btn:hover{
+      transform: translateY(-6px);
+      box-shadow: 0 18px 36px rgba(16,24,40,0.12);
+    }
+
+    .meta-vertical{ color:#9aa1a6; font-weight:600; font-size:0.85rem; display:flex; flex-direction:column; gap:4px; align-items:center; }
+
+    .state-default{ background:var(--green-light); color:#000; }
+    .state-delivered{ background:var(--red-delivered); color:#fff; }
+    .state-gonflage{ background:var(--yellow); color:#000; }
+    .state-disponible{ background:var(--green-light); color:#000; }
+
+    /* Panel / modal */
+    .modal-backdrop{ position:fixed; inset:0; background:rgba(8,10,12,0.45); display:none; align-items:center; justify-content:center; z-index:60; }
+    .panel{ background:#fff; border-radius:12px; width:min(760px,96%); max-height:92vh; overflow:auto; padding:18px; box-shadow:0 18px 60px rgba(2,6,23,0.4); }
+    .panel h2{ margin:0 0 12px 0; font-size:1.4rem; }
+
+    .field{ margin:10px 0; display:flex; gap:12px; align-items:center; }
+    .field label{ min-width:140px; font-weight:700; color:#223; }
+    .field input[type="text"], .field input[type="number"]{ padding:10px; border:1px solid #d8dde6; border-radius:8px; flex:1; font-size:1rem; }
+
+    .panel-footer{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:16px; }
+    .actions-left{ display:flex; gap:10px; align-items:center; }
+    .actions-right{ display:flex; gap:10px; align-items:center; }
+
+    .btn{ padding:10px 14px; border-radius:10px; border:0; cursor:pointer; font-weight:700; min-width:120px; }
+    .btn.ghost{ background:#f3f6fb; color:var(--red); border:1px solid #e6edf9; }
+    .btn.red{ background:var(--red-delivered); color:#fff; }
+    .btn.yellow{ background:var(--yellow); color:#000; }
+    .btn.green{ background:var(--green-strong); color:#fff; }
+
+    .hidden{ display:none !important; }
+
+    @media (max-width:900px){ .topbar .title{ font-size:1.4rem; } .panel{ width:min(92%,720px); } }
+    @media (max-width:640px){
+      .btn-grid{ grid-template-columns: repeat(2,1fr); }
+      .field label{ min-width:110px; }
+      .panel-footer{ flex-direction:column-reverse; align-items:stretch; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar" role="banner">
+    <div class="back hidden" id="backBtn" aria-hidden="true" title="Retour">←</div>
+    <div class="title">Osiris - ROC</div>
+  </div>
+
+  <main>
+    <!-- HOME (welcome removed) -->
+    <div id="home" class="home">
+      <div class="grid-main">
+        <a class="grid-btn" id="openCadresMain" href="#" role="button">
+          Synoptique des Cadres et Biolines
+          <span class="desc">Vue synthétique et gestion des cadres et biolines</span>
+        </a>
+
+        <a class="grid-btn" id="openEnginsMain" href="#" role="button">
+          Synoptique des Engins
+          <span class="desc">Etat des engins et disponibilité</span>
+        </a>
+
+        <a class="grid-btn" id="openArchivesMain" href="#" role="button">
+          Interventions archivées
+          <span class="desc">Historique des interventions</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- SUBMENU Cadres -->
+    <section id="cadresView" class="submenu hidden" aria-label="Synoptique des Cadres et Biolines">
+      <div class="subtitle">Synoptique des Cadres et Biolines</div>
+
+      <div class="section">
+        <div class="section-title">Cadres d'air</div>
+        <div id="cadresGrid" class="btn-grid" aria-label="Liste des cadres"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Biolines</div>
+        <div id="biolinesGrid" class="btn-grid" aria-label="Liste des biolines"></div>
+      </div>
+    </section>
+
+    <!-- SUBMENU Engins -->
+    <section id="enginsView" class="submenu hidden" aria-label="Synoptique des Engins">
+      <div class="subtitle">Synoptique des Engins</div>
+      <div style="color:#55606b;">Contenu Synoptique des Engins — à implémenter ou brancher sur vos données existantes.</div>
+    </section>
+
+    <!-- SUBMENU Archives -->
+    <section id="archivesView" class="submenu hidden" aria-label="Interventions archivées">
+      <div class="subtitle">Interventions archivées</div>
+      <div style="color:#55606b;">Contenu Interventions archivées — à implémenter ou brancher sur vos sources.</div>
+    </section>
+  </main>
+
+  <!-- Modal / Panel for both Cadre and Bioline details -->
+  <div class="modal-backdrop" id="modal" role="dialog" aria-hidden="true">
+    <div class="panel" role="document" aria-labelledby="panelTitle">
+      <h2 id="panelTitle">Objet n°X</h2>
+
+      <div class="field">
+        <label>Localisation :</label>
+        <input id="localisationInput" type="text" placeholder="ex: CT, Garage, VPCE / CT..." />
+      </div>
+
+      <div class="field">
+        <label>Pression :</label>
+        <input id="pressionInput" type="number" min="0" placeholder="ex: 300" />
+      </div>
+
+      <div class="panel-footer">
+        <div class="actions-left">
+          <button id="actionBtn" class="btn yellow">Gonflage</button>
+        </div>
+        <div class="actions-right">
+          <button id="validerBtn" class="btn ghost">Valider</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Firebase modular SDK imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getDatabase, ref, onValue, update, set, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+    // Your firebase config (kept as provided)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCehIP1O3ZsFsdOt-zjMI0Zex2HazNjKKU",
+      authDomain: "osiris-roc-1-0.firebaseapp.com",
+      databaseURL: "https://osiris-roc-1-0-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "osiris-roc-1-0",
+      storageBucket: "osiris-roc-1-0.firebasestorage.app",
+      messagingSenderId: "794382198691",
+      appId: "1:794382198691:web:374f549533dbaa1fc79c16"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // UI references
+    const home = document.getElementById('home');
+    const backBtn = document.getElementById('backBtn');
+    const openCadresMain = document.getElementById('openCadresMain');
+    const openEnginsMain = document.getElementById('openEnginsMain');
+    const openArchivesMain = document.getElementById('openArchivesMain');
+    const cadresView = document.getElementById('cadresView');
+    const enginsView = document.getElementById('enginsView');
+    const archivesView = document.getElementById('archivesView');
+    const cadresGrid = document.getElementById('cadresGrid');
+    const biolinesGrid = document.getElementById('biolinesGrid');
+
+    const modal = document.getElementById('modal');
+    const panelTitle = document.getElementById('panelTitle');
+    const localisationInput = document.getElementById('localisationInput');
+    const pressionInput = document.getElementById('pressionInput');
+    const actionBtn = document.getElementById('actionBtn');
+    const validerBtn = document.getElementById('validerBtn');
+
+    // Local store mirroring DB
+    // store.cadres[i] and store.biolines[i] have { Localisation, Pression, State }
+    const store = { cadres: {}, biolines: {} };
+
+    // Navigation helpers
+    function showView(viewEl) {
+      home.classList.add('hidden');
+      [cadresView, enginsView, archivesView].forEach(s => s.classList.add('hidden'));
+      viewEl.classList.remove('hidden');
+      backBtn.classList.remove('hidden');
+    }
+    function showHome() {
+      [cadresView, enginsView, archivesView].forEach(s => s.classList.add('hidden'));
+      home.classList.remove('hidden');
+      backBtn.classList.add('hidden');
+    }
+
+    openCadresMain.addEventListener('click', (e)=>{ e.preventDefault(); showView(cadresView); });
+    openEnginsMain.addEventListener('click', (e)=>{ e.preventDefault(); showView(enginsView); });
+    openArchivesMain.addEventListener('click', (e)=>{ e.preventDefault(); showView(archivesView); });
+    backBtn.addEventListener('click', (e)=>{ e.preventDefault(); showHome(); });
+
+    // DB path helpers
+    function cadrePath(n){ return `Cadre/${n}`; }
+    function biolinePath(n){ return `Bioline/${n}`; }
+
+    // Ensure nodes exist in DB (non-destructive)
+    async function ensureNodes(){
+      for(let i=1;i<=10;i++){
+        const snap = await get(ref(db, cadrePath(i)));
+        if (!snap.exists()){
+          await set(ref(db, cadrePath(i)), { Localisation: '', Pression: '', State: 'default' });
+        }
+      }
+      for(let i=1;i<=5;i++){
+        const snap = await get(ref(db, biolinePath(i)));
+        if (!snap.exists()){
+          await set(ref(db, biolinePath(i)), { Localisation: '', Pression: '', State: 'default' });
+        }
+      }
+    }
+    ensureNodes().catch(console.error);
+
+    // Build UI buttons for cadres and biolines
+    for(let i=1;i<=10;i++){
+      store.cadres[i] = { Localisation:'', Pression:'', State:'default' };
+      const btn = document.createElement('button');
+      btn.className = 'small-btn state-default';
+      btn.id = `cadre-${i}`;
+      btn.innerHTML = `<div>Cadre n°${i}</div><div class="meta-vertical" id="meta-cadre-${i}"></div>`;
+      btn.dataset.idx = i;
+      btn.addEventListener('click', ()=> openPanel('Cadre', i));
+      cadresGrid.appendChild(btn);
+    }
+
+    for(let i=1;i<=5;i++){
+      store.biolines[i] = { Localisation:'', Pression:'', State:'default' };
+      const btn = document.createElement('button');
+      btn.className = 'small-btn state-default';
+      btn.id = `bioline-${i}`;
+      btn.innerHTML = `<div>Bioline n°${i}</div><div class="meta-vertical" id="meta-bioline-${i}"></div>`;
+      btn.dataset.idx = i;
+      btn.addEventListener('click', ()=> openPanel('Bioline', i));
+      biolinesGrid.appendChild(btn);
+    }
+
+    // Realtime listeners for Cadre and Bioline nodes
+    for(let i=1;i<=10;i++){
+      const r = ref(db, `Cadre/${i}`);
+      onValue(r, (snap) => {
+        const v = snap.val() || {};
+        store.cadres[i].Localisation = v.Localisation ?? '';
+        store.cadres[i].Pression = v.Pression ?? '';
+        store.cadres[i].State = v.State ?? (store.cadres[i].State || 'default');
+        refreshCadreUI(i);
+        // if modal open and active is this object, refresh action button
+        if (activeType === 'Cadre' && activeIdx === i) refreshActionButton();
+      });
+    }
+
+    for(let i=1;i<=5;i++){
+      const r = ref(db, `Bioline/${i}`);
+      onValue(r, (snap) => {
+        const v = snap.val() || {};
+        store.biolines[i].Localisation = v.Localisation ?? '';
+        store.biolines[i].Pression = v.Pression ?? '';
+        store.biolines[i].State = v.State ?? (store.biolines[i].State || 'default');
+        refreshBiolineUI(i);
+        if (activeType === 'Bioline' && activeIdx === i) refreshActionButton();
+      });
+    }
+
+    // UI refresh functions (same rules as Cadres)
+    function refreshCadreUI(i){
+      const d = store.cadres[i];
+      const btn = document.getElementById(`cadre-${i}`);
+      const meta = document.getElementById(`meta-cadre-${i}`);
+      if (d.State === 'disponible' || d.State === 'default') {
+        meta.innerHTML = '';
+      } else {
+        const lines = [];
+        if (d.Localisation) lines.push(`Localisation: ${d.Localisation}`);
+        if (d.Pression) lines.push(`Pression: ${d.Pression}`);
+        meta.innerHTML = lines.map(l=>`<div>${l}</div>`).join('');
+      }
+      btn.classList.remove('state-default','state-delivered','state-gonflage','state-disponible');
+      if (d.State === 'delivered') btn.classList.add('state-delivered');
+      else if (d.State === 'gonflage') btn.classList.add('state-gonflage');
+      else if (d.State === 'disponible') btn.classList.add('state-disponible');
+      else btn.classList.add('state-default');
+    }
+
+    function refreshBiolineUI(i){
+      const d = store.biolines[i];
+      const btn = document.getElementById(`bioline-${i}`);
+      const meta = document.getElementById(`meta-bioline-${i}`);
+      if (d.State === 'disponible' || d.State === 'default') {
+        meta.innerHTML = '';
+      } else {
+        const lines = [];
+        if (d.Localisation) lines.push(`Localisation: ${d.Localisation}`);
+        if (d.Pression) lines.push(`Pression: ${d.Pression}`);
+        meta.innerHTML = lines.map(l=>`<div>${l}</div>`).join('');
+      }
+      btn.classList.remove('state-default','state-delivered','state-gonflage','state-disponible');
+      if (d.State === 'delivered') btn.classList.add('state-delivered');
+      else if (d.State === 'gonflage') btn.classList.add('state-gonflage');
+      else if (d.State === 'disponible') btn.classList.add('state-disponible');
+      else btn.classList.add('state-default');
+    }
+
+    // Modal state: keep track if it's Cadre or Bioline and index
+    let activeType = null; // 'Cadre' or 'Bioline'
+    let activeIdx = null;
+
+    // Open panel for either type
+    function openPanel(type, idx){
+      activeType = type;
+      activeIdx = idx;
+      const d = (type === 'Cadre') ? store.cadres[idx] : store.biolines[idx];
+      panelTitle.textContent = `${type} n°${idx}`;
+      localisationInput.value = d.Localisation || '';
+      pressionInput.value = d.Pression || '';
+      refreshActionButton();
+      modal.style.display = 'flex';
+      modal.setAttribute('aria-hidden','false');
+      setTimeout(()=> localisationInput.focus(),50);
+    }
+
+    function closePanel(){
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden','true');
+      activeType = null;
+      activeIdx = null;
+    }
+
+    // Debounce helper for live writes
+    function debounce(fn, wait=300){ let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), wait); }; }
+
+    const liveWrite = debounce(async (type, idx, field, value) => {
+      try {
+        const path = (type === 'Cadre') ? `Cadre/${idx}` : `Bioline/${idx}`;
+        const obj = {}; obj[field] = value;
+        await update(ref(db, path), obj);
+      } catch(err){ console.error('liveWrite', err); }
+    }, 300);
+
+    // Live input handlers (write immediately debounced)
+    localisationInput.addEventListener('input', (e) => {
+      if (!activeType || !activeIdx) return;
+      const v = e.target.value;
+      if (activeType === 'Cadre') store.cadres[activeIdx].Localisation = v;
+      else store.biolines[activeIdx].Localisation = v;
+      liveWrite(activeType, activeIdx, 'Localisation', v);
+    });
+
+    pressionInput.addEventListener('input', (e) => {
+      if (!activeType || !activeIdx) return;
+      const v = e.target.value;
+      if (activeType === 'Cadre') store.cadres[activeIdx].Pression = v;
+      else store.biolines[activeIdx].Pression = v;
+      liveWrite(activeType, activeIdx, 'Pression', v);
+    });
+
+    // Valider: write both fields and close modal, without changing state/color
+    validerBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      if (!activeType || !activeIdx) return;
+      const path = (activeType === 'Cadre') ? `Cadre/${activeIdx}` : `Bioline/${activeIdx}`;
+      const Localisation = localisationInput.value.trim();
+      const Pression = pressionInput.value.trim();
+      try {
+        await update(ref(db, path), { Localisation, Pression });
+      } catch(err){ console.error('valider', err); }
+      closePanel();
+    });
+
+    // Action button transitions for both types (same logic), then close modal
+    actionBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      if (!activeType || !activeIdx) return;
+      const path = (activeType === 'Cadre') ? `Cadre/${activeIdx}` : `Bioline/${activeIdx}`;
+      const cur = (activeType === 'Cadre') ? store.cadres[activeIdx] : store.biolines[activeIdx];
+      try {
+        // Green/default -> Livrer => set delivered
+        if (cur.State === 'default' || cur.State === 'disponible' || !cur.State) {
+          await update(ref(db, path), { State: 'delivered' });
+          closePanel();
+          return;
+        }
+        // Red(delivered) -> Gonflage => set gonflage and Localisation 'VPCE / CT'
+        if (cur.State === 'delivered') {
+          await update(ref(db, path), { State: 'gonflage', Localisation: 'VPCE / CT' });
+          closePanel();
+          return;
+        }
+        // Yellow(gonflage) -> Disponible CT => set default (green) and Pression 300
+        if (cur.State === 'gonflage') {
+          await update(ref(db, path), { State: 'default', Pression: '300' });
+          closePanel();
+          return;
+        }
+      } catch(err){ console.error('actionBtn', err); }
+    });
+
+    // Refresh action button text/color according to current object's state
+    function refreshActionButton(){
+      if (!activeType || !activeIdx) return;
+      const cur = (activeType === 'Cadre') ? store.cadres[activeIdx] : store.biolines[activeIdx];
+      actionBtn.className = 'btn';
+      if (cur.State === 'delivered') { actionBtn.textContent = 'Gonflage'; actionBtn.classList.add('yellow'); }
+      else if (cur.State === 'gonflage') { actionBtn.textContent = 'Disponible CT'; actionBtn.classList.add('green'); }
+      else { actionBtn.textContent = 'Livraison'; actionBtn.classList.add('red'); }
+    }
+
+    // Modal close on backdrop or Escape
+    modal.addEventListener('click', (e) => { if (e.target === modal) closePanel(); });
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.style.display === 'flex') closePanel(); });
+
+  </script>
+</body>
+</html>
