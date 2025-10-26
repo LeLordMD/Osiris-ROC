@@ -119,10 +119,9 @@
     .state-hs{ background:#000; color:#fff; }
 
     .modal-backdrop{ position:fixed; inset:0; background:rgba(8,10,12,0.45); display:none; align-items:center; justify-content:center; z-index:60; }
-    .panel{ background:#fff; border-radius:12px; width:min(760px,96%); max-height:92vh; overflow:auto; padding:22px; box-shadow:0 18px 60px rgba(2,6,23,0.4); position:relative; } /* position relative for HS button */
+    .panel{ background:#fff; border-radius:12px; width:min(760px,96%); max-height:92vh; overflow:auto; padding:22px; box-shadow:0 18px 60px rgba(2,6,23,0.4); position:relative; }
     .panel h2{ margin:0 0 12px 0; font-size:1.5rem; }
 
-    /* Hors Service button: top-right */
     .hs-btn {
       position:absolute;
       top:12px;
@@ -221,7 +220,6 @@
 
   <div class="modal-backdrop" id="modal" role="dialog" aria-hidden="true">
     <div class="panel" role="document" aria-labelledby="panelTitle">
-      <!-- HS button top-right -->
       <button id="hsBtn" class="hs-btn hidden" title="Mettre Hors Service">Hors Service</button>
 
       <h2 id="panelTitle">Objet n°X</h2>
@@ -423,18 +421,16 @@
       panelTitle.textContent = `${type} n°${idx}`;
       localisationInput.value = (d.Localisation || '').toString().toUpperCase();
       pressionInput.value = d.Pression || '';
-      // reset temp trackers
       tempPrevLocalisation = localisationInput.value;
       tempPrevPression = pressionInput.value;
       hasClearedLocalisation = false;
       hasClearedPression = false;
       refreshActionButton();
-      // show HS button except maybe decide to hide when already HS? still show to allow setting again
       hsBtn.classList.remove('hidden');
-      // If state is HS we want action to show "Disponible CT" (handled in refreshActionButton)
       modal.style.display = 'flex';
       modal.setAttribute('aria-hidden','false');
-      setTimeout(()=> localisationInput.focus(),50);
+      // Focus on Pression as requested
+      setTimeout(()=> pressionInput.focus(),50);
     }
 
     function closePanel(){
@@ -442,7 +438,6 @@
       modal.setAttribute('aria-hidden','true');
       activeType = null;
       activeIdx = null;
-      // clear temps
       tempPrevLocalisation = null;
       tempPrevPression = null;
       hasClearedLocalisation = false;
@@ -467,7 +462,6 @@
       const type = activeType;
       const idx = activeIdx;
       const path = (type === 'Cadre') ? `Cadre/${idx}` : `Bioline/${idx}`;
-      // close UI immediately
       closePanel();
       try {
         await update(ref(db, path), { State: 'HS', Localisation: 'HS', Pression: '0' });
@@ -503,6 +497,7 @@
       liveWrite(activeType, activeIdx, 'Localisation', v);
     });
 
+    // Pression focus/blur restore behavior
     pressionInput.addEventListener('focus', (e) => {
       if (!activeType || !activeIdx) return;
       if (!hasClearedPression) {
@@ -529,7 +524,7 @@
       liveWrite(activeType, activeIdx, 'Pression', v);
     });
 
-    // Valider: write both fields and close modal, if empty restore previous values
+    // Valider: write both fields and close modal, restore if empty
     validerBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       if (!activeType || !activeIdx) return;
@@ -559,7 +554,6 @@
       const type = activeType;
       const idx = activeIdx;
       const cur = (type === 'Cadre') ? { ...store.cadres[idx] } : { ...store.biolines[idx] };
-      // close UI immediately
       closePanel();
       const path = (type === 'Cadre') ? `Cadre/${idx}` : `Bioline/${idx}`;
       try {
@@ -568,15 +562,21 @@
           await update(ref(db, path), { State: 'delivered' });
           return;
         }
-        // Red(delivered) -> Gonflage => set gonflage and Localisation adjusted
+        // Red(delivered) -> Gonflage => set gonflage and Localisation adjusted per type
         if (cur.State === 'delivered') {
           const newLoc = (type === 'Bioline') ? 'CT' : 'VPCE / CT';
           await update(ref(db, path), { State: 'gonflage', Localisation: newLoc });
           return;
         }
-        // Yellow(gonflage) OR HS -> Disponible CT => set default (green) and Pression 300
-        if (cur.State === 'gonflage' || cur.State === 'HS') {
+        // Yellow(gonflage) -> Disponible CT => set default (green) and Pression 300
+        if (cur.State === 'gonflage') {
           await update(ref(db, path), { State: 'default', Pression: '300' });
+          return;
+        }
+        // HS -> Disponible CT : restore localisation depending on type and set default+Pression 300
+        if (cur.State === 'HS') {
+          const newLoc = (type === 'Bioline') ? 'CT' : 'VPCE / CT';
+          await update(ref(db, path), { State: 'default', Pression: '300', Localisation: newLoc });
           return;
         }
       } catch(err){ console.error('actionBtn', err); }
@@ -587,7 +587,7 @@
       if (!activeType || !activeIdx) return;
       const cur = (activeType === 'Cadre') ? store.cadres[activeIdx] : store.biolines[activeIdx];
       actionBtn.className = 'btn';
-      // If HS, show 'Disponible CT' as requested (acts like gonflage -> disponible)
+      // If HS, show 'Disponible CT' as requested
       if (cur.State === 'HS') {
         actionBtn.textContent = 'Disponible CT';
         actionBtn.classList.add('green');
