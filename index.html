@@ -28,8 +28,7 @@
       display:flex;
       flex-direction:column;
       min-height:100%;
-      /* Police globale légèrement réduite par rapport à la version précédente */
-      font-size:16px;
+      font-size:15px; /* police générale légèrement réduite */
     }
 
     .topbar{
@@ -45,12 +44,11 @@
       font-size:1.15rem;
     }
     .topbar .title{
-      flex:1;text-align:center;font-weight:900;font-size:2.4rem;color:#fff;margin-right:44px;
+      flex:1;text-align:center;font-weight:900;font-size:2.2rem;color:#fff;margin-right:44px;
     }
 
     main{ flex:1; padding:28px; max-width:1200px; width:100%; margin:0 auto; box-sizing:border-box; }
 
-    /* Home grid only (welcome card removed as requested) */
     .grid-main{ display:flex; flex-direction:column; gap:14px; margin-top:8px; }
     .grid-btn{
       background:var(--card);
@@ -58,38 +56,37 @@
       padding:24px 22px;
       text-align:center;
       font-weight:900;
-      font-size:1.9rem; /* titre des boutons grand mais moins que précédemment */
+      font-size:1.7rem;
       color:var(--text);
       cursor:pointer;
       box-shadow:0 10px 28px rgba(16,24,40,0.06);
       text-decoration:none;
       display:block;
       transition: transform .12s cubic-bezier(.2,.9,.2,1), box-shadow .12s cubic-bezier(.2,.9,.2,1);
-      min-height:88px;
+      min-height:80px;
       display:flex;
       align-items:center;
       justify-content:center;
     }
-    .grid-btn .desc{ display:none; } /* phrases supprimées */
+    .grid-btn .desc{ display:none; }
 
     .grid-btn:hover{
       transform: translateY(-8px);
       box-shadow: 0 26px 50px rgba(16,24,40,0.14);
     }
 
-    /* Submenu */
     .submenu{ display:flex; flex-direction:column; gap:20px; }
-    .subtitle{ font-size:1.45rem; font-weight:800; color:var(--text); margin:8px 0; }
+    .subtitle{ font-size:1.35rem; font-weight:800; color:var(--text); margin:8px 0; }
 
-    .section-title{ font-size:1.2rem; font-weight:900; color:#9b1e1e; margin:10px 0; }
+    .section-title{ font-size:1.1rem; font-weight:900; color:#9b1e1e; margin:10px 0; }
 
-    .btn-grid{ display:grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap:14px; margin-bottom:18px; }
+    .btn-grid{ display:grid; grid-template-columns: repeat(auto-fill,minmax(210px,1fr)); gap:14px; margin-bottom:18px; }
 
     .small-btn{
       background:var(--green-light);
       border:1px solid var(--btn-border);
       border-radius:12px;
-      padding:18px;
+      padding:16px;
       font-weight:900;
       color:#000;
       cursor:pointer;
@@ -99,7 +96,7 @@
       flex-direction:column;
       align-items:center;
       gap:10px;
-      min-height:110px;
+      min-height:100px;
       transition: transform .12s cubic-bezier(.2,.9,.2,1), box-shadow .12s cubic-bezier(.2,.9,.2,1);
     }
     .small-btn:hover{
@@ -108,33 +105,31 @@
     }
 
     .small-btn > div:first-child{
-      /* Nom des cadres/biolines très visible */
-      font-size:1.6rem;
+      font-size:1.4rem;
       font-weight:900;
       line-height:1;
     }
 
-    .meta-vertical{ color:#43494d; font-weight:700; font-size:1.0rem; display:flex; flex-direction:column; gap:6px; align-items:center; text-align:center; }
+    .meta-vertical{ color:#43494d; font-weight:700; font-size:0.95rem; display:flex; flex-direction:column; gap:6px; align-items:center; text-align:center; }
 
     .state-default{ background:var(--green-light); color:#000; }
     .state-delivered{ background:var(--red-delivered); color:#fff; }
     .state-gonflage{ background:var(--yellow); color:#000; }
     .state-disponible{ background:var(--green-light); color:#000; }
 
-    /* Panel / modal */
     .modal-backdrop{ position:fixed; inset:0; background:rgba(8,10,12,0.45); display:none; align-items:center; justify-content:center; z-index:60; }
     .panel{ background:#fff; border-radius:12px; width:min(760px,96%); max-height:92vh; overflow:auto; padding:22px; box-shadow:0 18px 60px rgba(2,6,23,0.4); }
-    .panel h2{ margin:0 0 12px 0; font-size:1.6rem; }
+    .panel h2{ margin:0 0 12px 0; font-size:1.5rem; }
 
     .field{ margin:12px 0; display:flex; gap:14px; align-items:center; }
-    .field label{ min-width:160px; font-weight:800; color:#223; font-size:1.05rem; }
-    .field input[type="text"], .field input[type="number"]{ padding:12px; border:1px solid #d8dde6; border-radius:10px; flex:1; font-size:1.05rem; text-transform:uppercase; }
+    .field label{ min-width:150px; font-weight:800; color:#223; font-size:1rem; }
+    .field input[type="text"], .field input[type="number"]{ padding:10px; border:1px solid #d8dde6; border-radius:10px; flex:1; font-size:1rem; text-transform:uppercase; }
 
     .panel-footer{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:18px; }
     .actions-left{ display:flex; gap:12px; align-items:center; }
     .actions-right{ display:flex; gap:12px; align-items:center; }
 
-    .btn{ padding:12px 16px; border-radius:10px; border:0; cursor:pointer; font-weight:800; min-width:140px; font-size:1rem; }
+    .btn{ padding:10px 14px; border-radius:10px; border:0; cursor:pointer; font-weight:800; min-width:140px; font-size:1rem; }
     .btn.ghost{ background:#f3f6fb; color:var(--red); border:1px solid #e6edf9; }
     .btn.red{ background:var(--red-delivered); color:#fff; }
     .btn.yellow{ background:var(--yellow); color:#000; }
@@ -142,15 +137,20 @@
 
     .hidden{ display:none !important; }
 
-    @media (max-width:900px){ .topbar .title{ font-size:1.9rem; } .panel{ width:min(92%,720px); } .small-btn > div:first-child{ font-size:1.4rem; } .grid-btn{ font-size:1.6rem; padding:20px; } }
+    @media (max-width:900px){
+      .topbar .title{ font-size:1.8rem; }
+      .panel{ width:min(92%,720px); }
+      .small-btn > div:first-child{ font-size:1.2rem; }
+      .grid-btn{ font-size:1.4rem; padding:16px; }
+    }
     @media (max-width:640px){
       .btn-grid{ grid-template-columns: repeat(2,1fr); }
       .field label{ min-width:110px; }
       .panel-footer{ flex-direction:column-reverse; align-items:stretch; }
-      .topbar .title{ font-size:1.6rem; margin-right:36px; }
-      .grid-btn{ font-size:1.5rem; padding:16px; }
-      .small-btn{ min-height:96px; padding:14px; }
-      .small-btn > div:first-child{ font-size:1.25rem; }
+      .topbar .title{ font-size:1.4rem; margin-right:36px; }
+      .grid-btn{ font-size:1.2rem; padding:12px; }
+      .small-btn{ min-height:88px; padding:12px; }
+      .small-btn > div:first-child{ font-size:1.05rem; }
     }
   </style>
 </head>
@@ -161,7 +161,6 @@
   </div>
 
   <main>
-    <!-- HOME (phrases descriptives supprimées) -->
     <div id="home" class="home">
       <div class="grid-main">
         <a class="grid-btn" id="openCadresMain" href="#" role="button">
@@ -178,7 +177,6 @@
       </div>
     </div>
 
-    <!-- SUBMENU Cadres -->
     <section id="cadresView" class="submenu hidden" aria-label="Synoptique des Cadres et Biolines">
       <div class="subtitle">Synoptique des Cadres et Biolines</div>
 
@@ -193,20 +191,17 @@
       </div>
     </section>
 
-    <!-- SUBMENU Engins -->
     <section id="enginsView" class="submenu hidden" aria-label="Synoptique des Engins">
       <div class="subtitle">Synoptique des Engins</div>
       <div style="color:#55606b;">Contenu Synoptique des Engins — à implémenter ou brancher sur vos données existantes.</div>
     </section>
 
-    <!-- SUBMENU Archives -->
     <section id="archivesView" class="submenu hidden" aria-label="Interventions archivées">
       <div class="subtitle">Interventions archivées</div>
       <div style="color:#55606b;">Contenu Interventions archivées — à implémenter ou brancher sur vos sources.</div>
     </section>
   </main>
 
-  <!-- Modal / Panel for both Cadre and Bioline details -->
   <div class="modal-backdrop" id="modal" role="dialog" aria-hidden="true">
     <div class="panel" role="document" aria-labelledby="panelTitle">
       <h2 id="panelTitle">Objet n°X</h2>
@@ -218,7 +213,8 @@
 
       <div class="field">
         <label>Pression :</label>
-        <input id="pressionInput" type="number" min="0" placeholder="ex: 300" />
+        <!-- inputmode et pattern pour forcer clavier numérique sur mobiles -->
+        <input id="pressionInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" placeholder="ex: 300" />
       </div>
 
       <div class="panel-footer">
@@ -233,11 +229,9 @@
   </div>
 
   <script type="module">
-    // Firebase modular SDK imports
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
     import { getDatabase, ref, onValue, update, set, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-    // Your firebase config (kept as provided)
     const firebaseConfig = {
       apiKey: "AIzaSyCehIP1O3ZsFsdOt-zjMI0Zex2HazNjKKU",
       authDomain: "osiris-roc-1-0.firebaseapp.com",
@@ -251,7 +245,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // UI references
     const home = document.getElementById('home');
     const backBtn = document.getElementById('backBtn');
     const openCadresMain = document.getElementById('openCadresMain');
@@ -270,11 +263,8 @@
     const actionBtn = document.getElementById('actionBtn');
     const validerBtn = document.getElementById('validerBtn');
 
-    // Local store mirroring DB
-    // store.cadres[i] and store.biolines[i] have { Localisation, Pression, State }
     const store = { cadres: {}, biolines: {} };
 
-    // Navigation helpers
     function showView(viewEl) {
       home.classList.add('hidden');
       [cadresView, enginsView, archivesView].forEach(s => s.classList.add('hidden'));
@@ -292,11 +282,9 @@
     openArchivesMain.addEventListener('click', (e)=>{ e.preventDefault(); showView(archivesView); });
     backBtn.addEventListener('click', (e)=>{ e.preventDefault(); showHome(); });
 
-    // DB path helpers
     function cadrePath(n){ return `Cadre/${n}`; }
     function biolinePath(n){ return `Bioline/${n}`; }
 
-    // Ensure nodes exist in DB (non-destructive)
     async function ensureNodes(){
       for(let i=1;i<=10;i++){
         const snap = await get(ref(db, cadrePath(i)));
@@ -313,7 +301,6 @@
     }
     ensureNodes().catch(console.error);
 
-    // Build UI buttons for cadres and biolines
     for(let i=1;i<=10;i++){
       store.cadres[i] = { Localisation:'', Pression:'', State:'default' };
       const btn = document.createElement('button');
@@ -336,7 +323,6 @@
       biolinesGrid.appendChild(btn);
     }
 
-    // Realtime listeners for Cadre and Bioline nodes
     for(let i=1;i<=10;i++){
       const r = ref(db, `Cadre/${i}`);
       onValue(r, (snap) => {
@@ -361,7 +347,6 @@
       });
     }
 
-    // UI refresh functions
     function refreshCadreUI(i){
       const d = store.cadres[i];
       const btn = document.getElementById(`cadre-${i}`);
@@ -400,18 +385,28 @@
       else btn.classList.add('state-default');
     }
 
-    // Modal state
     let activeType = null; // 'Cadre' or 'Bioline'
     let activeIdx = null;
 
-    // Open panel for either type
+    // temporary storage to restore values if user clicked accidentally
+    let tempPrevLocalisation = null;
+    let tempPrevPression = null;
+    let hasClearedLocalisation = false;
+    let hasClearedPression = false;
+
     function openPanel(type, idx){
       activeType = type;
       activeIdx = idx;
       const d = (type === 'Cadre') ? store.cadres[idx] : store.biolines[idx];
       panelTitle.textContent = `${type} n°${idx}`;
+      // set inputs with uppercase localisation
       localisationInput.value = (d.Localisation || '').toString().toUpperCase();
       pressionInput.value = d.Pression || '';
+      // reset temp trackers
+      tempPrevLocalisation = localisationInput.value;
+      tempPrevPression = pressionInput.value;
+      hasClearedLocalisation = false;
+      hasClearedPression = false;
       refreshActionButton();
       modal.style.display = 'flex';
       modal.setAttribute('aria-hidden','false');
@@ -423,9 +418,13 @@
       modal.setAttribute('aria-hidden','true');
       activeType = null;
       activeIdx = null;
+      // clear temps
+      tempPrevLocalisation = null;
+      tempPrevPression = null;
+      hasClearedLocalisation = false;
+      hasClearedPression = false;
     }
 
-    // Debounce helper for live writes
     function debounce(fn, wait=300){ let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), wait); }; }
 
     const liveWrite = debounce(async (type, idx, field, value) => {
@@ -436,16 +435,55 @@
       } catch(err){ console.error('liveWrite', err); }
     }, 300);
 
-    // Live input handlers: Localisation uppercase and written uppercase
+    // Field focus handlers: clear on focus but remember previous value
+    localisationInput.addEventListener('focus', (e) => {
+      if (!activeType || !activeIdx) return;
+      // store previous value only the first time focus occurs for this open panel
+      if (!hasClearedLocalisation) {
+        tempPrevLocalisation = localisationInput.value;
+        localisationInput.value = '';
+        hasClearedLocalisation = true;
+      }
+    });
+
+    // If user blurs and left empty, restore previous (safety on accidental clear)
+    localisationInput.addEventListener('blur', (e) => {
+      if (!activeType || !activeIdx) return;
+      const v = (e.target.value || '').trim();
+      if (v === '' && tempPrevLocalisation !== null) {
+        localisationInput.value = tempPrevLocalisation;
+        hasClearedLocalisation = false;
+      }
+    });
+
+    // Localisation input: uppercase + live write
     localisationInput.addEventListener('input', (e) => {
       if (!activeType || !activeIdx) return;
       const raw = e.target.value || '';
       const v = raw.toUpperCase();
-      // reflect uppercase in the input immediately
       if (e.target.value !== v) e.target.value = v;
       if (activeType === 'Cadre') store.cadres[activeIdx].Localisation = v;
       else store.biolines[activeIdx].Localisation = v;
       liveWrite(activeType, activeIdx, 'Localisation', v);
+    });
+
+    // Pression focus/blur similar logic (and numeric keyboard already requested via input attributes)
+    pressionInput.addEventListener('focus', (e) => {
+      if (!activeType || !activeIdx) return;
+      if (!hasClearedPression) {
+        tempPrevPression = pressionInput.value;
+        pressionInput.value = '';
+        hasClearedPression = true;
+      }
+    });
+
+    pressionInput.addEventListener('blur', (e) => {
+      if (!activeType || !activeIdx) return;
+      const v = (e.target.value || '').trim();
+      if (v === '' && tempPrevPression !== null) {
+        pressionInput.value = tempPrevPression;
+        hasClearedPression = false;
+      }
     });
 
     pressionInput.addEventListener('input', (e) => {
@@ -456,26 +494,34 @@
       liveWrite(activeType, activeIdx, 'Pression', v);
     });
 
-    // Valider: write both fields (Localisation uppercased) and close modal
+    // Valider: write both fields and close modal, if empty restore previous values
     validerBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       if (!activeType || !activeIdx) return;
       const type = activeType;
       const idx = activeIdx;
       const path = (type === 'Cadre') ? `Cadre/${idx}` : `Bioline/${idx}`;
-      const Localisation = (localisationInput.value || '').trim().toUpperCase();
-      const Pression = (pressionInput.value || '').trim();
+      let Localisation = (localisationInput.value || '').trim().toUpperCase();
+      let Pression = (pressionInput.value || '').trim();
+
+      // restore if empty and previous exists
+      if (Localisation === '' && tempPrevLocalisation !== null) {
+        Localisation = tempPrevLocalisation;
+      }
+      if (Pression === '' && tempPrevPression !== null) {
+        Pression = tempPrevPression;
+      }
+
       try {
         await update(ref(db, path), { Localisation, Pression });
       } catch(err){ console.error('valider', err); }
       closePanel();
     });
 
-    // Action button transitions: close immediately on click, then perform DB updates
+    // Action button: close immediately on click, then perform DB updates
     actionBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       if (!activeType || !activeIdx) return;
-      // capture current context
       const type = activeType;
       const idx = activeIdx;
       const cur = (type === 'Cadre') ? { ...store.cadres[idx] } : { ...store.biolines[idx] };
@@ -483,18 +529,15 @@
       closePanel();
       const path = (type === 'Cadre') ? `Cadre/${idx}` : `Bioline/${idx}`;
       try {
-        // Green/default -> Livrer => set delivered
         if (cur.State === 'default' || cur.State === 'disponible' || !cur.State) {
           await update(ref(db, path), { State: 'delivered' });
           return;
         }
-        // Red(delivered) -> Gonflage => set gonflage and Localisation adjusted
         if (cur.State === 'delivered') {
           const newLoc = (type === 'Bioline') ? 'CT' : 'VPCE / CT';
           await update(ref(db, path), { State: 'gonflage', Localisation: newLoc });
           return;
         }
-        // Yellow(gonflage) -> Disponible CT => set default (green) and Pression 300
         if (cur.State === 'gonflage') {
           await update(ref(db, path), { State: 'default', Pression: '300' });
           return;
@@ -502,7 +545,6 @@
       } catch(err){ console.error('actionBtn', err); }
     });
 
-    // Refresh action button text/color according to current object's state
     function refreshActionButton(){
       if (!activeType || !activeIdx) return;
       const cur = (activeType === 'Cadre') ? store.cadres[activeIdx] : store.biolines[activeIdx];
@@ -512,7 +554,6 @@
       else { actionBtn.textContent = 'Livraison'; actionBtn.classList.add('red'); }
     }
 
-    // Modal close on backdrop or Escape
     modal.addEventListener('click', (e) => { if (e.target === modal) closePanel(); });
     window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.style.display === 'flex') closePanel(); });
 
