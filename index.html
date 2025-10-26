@@ -28,79 +28,93 @@
       display:flex;
       flex-direction:column;
       min-height:100%;
+      /* Police globale légèrement réduite par rapport à la version précédente */
+      font-size:16px;
     }
 
     .topbar{
       background:var(--red);
-      padding:14px 16px;
+      padding:18px 20px;
       display:flex;
       align-items:center;
-      gap:12px;
+      gap:14px;
       box-shadow: 0 1px 0 rgba(0,0,0,0.06);
     }
     .topbar .back{
-      width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;background:rgba(255,255,255,0.12);cursor:pointer;color:#fff;font-weight:700;user-select:none;
+      width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;background:rgba(255,255,255,0.12);cursor:pointer;color:#fff;font-weight:800;user-select:none;
+      font-size:1.15rem;
     }
     .topbar .title{
-      flex:1;text-align:center;font-weight:800;font-size:1.8rem;color:#fff;margin-right:36px;
+      flex:1;text-align:center;font-weight:900;font-size:2.4rem;color:#fff;margin-right:44px;
     }
 
-    main{ flex:1; padding:20px; max-width:1100px; width:100%; margin:0 auto; box-sizing:border-box; }
+    main{ flex:1; padding:28px; max-width:1200px; width:100%; margin:0 auto; box-sizing:border-box; }
 
     /* Home grid only (welcome card removed as requested) */
-    .grid-main{ display:flex; flex-direction:column; gap:12px; margin-top:6px; }
+    .grid-main{ display:flex; flex-direction:column; gap:14px; margin-top:8px; }
     .grid-btn{
       background:var(--card);
-      border-radius:14px;
-      padding:18px;
+      border-radius:16px;
+      padding:24px 22px;
       text-align:center;
-      font-weight:800;
-      font-size:1.05rem;
+      font-weight:900;
+      font-size:1.9rem; /* titre des boutons grand mais moins que précédemment */
       color:var(--text);
       cursor:pointer;
-      box-shadow:0 8px 20px rgba(16,24,40,0.06);
+      box-shadow:0 10px 28px rgba(16,24,40,0.06);
       text-decoration:none;
       display:block;
       transition: transform .12s cubic-bezier(.2,.9,.2,1), box-shadow .12s cubic-bezier(.2,.9,.2,1);
+      min-height:88px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
-    .grid-btn .desc{ display:block; margin-top:8px; font-weight:600; color:#55606b; font-size:0.95rem; }
+    .grid-btn .desc{ display:none; } /* phrases supprimées */
 
     .grid-btn:hover{
       transform: translateY(-8px);
-      box-shadow: 0 20px 40px rgba(16,24,40,0.14);
+      box-shadow: 0 26px 50px rgba(16,24,40,0.14);
     }
 
     /* Submenu */
-    .submenu{ display:flex; flex-direction:column; gap:18px; }
-    .subtitle{ font-size:1.1rem; font-weight:700; color:var(--text); margin:6px 0; }
+    .submenu{ display:flex; flex-direction:column; gap:20px; }
+    .subtitle{ font-size:1.45rem; font-weight:800; color:var(--text); margin:8px 0; }
 
-    .section-title{ font-size:1rem; font-weight:800; color:#9b1e1e; margin:8px 0; }
+    .section-title{ font-size:1.2rem; font-weight:900; color:#9b1e1e; margin:10px 0; }
 
-    .btn-grid{ display:grid; grid-template-columns: repeat(auto-fill,minmax(160px,1fr)); gap:10px; margin-bottom:14px; }
+    .btn-grid{ display:grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap:14px; margin-bottom:18px; }
 
     .small-btn{
       background:var(--green-light);
       border:1px solid var(--btn-border);
-      border-radius:10px;
-      padding:12px;
-      font-weight:700;
+      border-radius:12px;
+      padding:18px;
+      font-weight:900;
       color:#000;
       cursor:pointer;
       text-align:center;
-      box-shadow:0 6px 14px rgba(0,0,0,0.04);
+      box-shadow:0 8px 20px rgba(0,0,0,0.04);
       display:flex;
       flex-direction:column;
       align-items:center;
-      gap:8px;
-      min-height:74px;
+      gap:10px;
+      min-height:110px;
       transition: transform .12s cubic-bezier(.2,.9,.2,1), box-shadow .12s cubic-bezier(.2,.9,.2,1);
     }
     .small-btn:hover{
       transform: translateY(-6px);
-      box-shadow: 0 18px 36px rgba(16,24,40,0.12);
+      box-shadow: 0 22px 44px rgba(16,24,40,0.12);
     }
 
-    .meta-vertical{ color:#9aa1a6; font-weight:600; font-size:0.85rem; display:flex; flex-direction:column; gap:4px; align-items:center; }
+    .small-btn > div:first-child{
+      /* Nom des cadres/biolines très visible */
+      font-size:1.6rem;
+      font-weight:900;
+      line-height:1;
+    }
+
+    .meta-vertical{ color:#43494d; font-weight:700; font-size:1.0rem; display:flex; flex-direction:column; gap:6px; align-items:center; text-align:center; }
 
     .state-default{ background:var(--green-light); color:#000; }
     .state-delivered{ background:var(--red-delivered); color:#fff; }
@@ -109,18 +123,18 @@
 
     /* Panel / modal */
     .modal-backdrop{ position:fixed; inset:0; background:rgba(8,10,12,0.45); display:none; align-items:center; justify-content:center; z-index:60; }
-    .panel{ background:#fff; border-radius:12px; width:min(760px,96%); max-height:92vh; overflow:auto; padding:18px; box-shadow:0 18px 60px rgba(2,6,23,0.4); }
-    .panel h2{ margin:0 0 12px 0; font-size:1.4rem; }
+    .panel{ background:#fff; border-radius:12px; width:min(760px,96%); max-height:92vh; overflow:auto; padding:22px; box-shadow:0 18px 60px rgba(2,6,23,0.4); }
+    .panel h2{ margin:0 0 12px 0; font-size:1.6rem; }
 
-    .field{ margin:10px 0; display:flex; gap:12px; align-items:center; }
-    .field label{ min-width:140px; font-weight:700; color:#223; }
-    .field input[type="text"], .field input[type="number"]{ padding:10px; border:1px solid #d8dde6; border-radius:8px; flex:1; font-size:1rem; }
+    .field{ margin:12px 0; display:flex; gap:14px; align-items:center; }
+    .field label{ min-width:160px; font-weight:800; color:#223; font-size:1.05rem; }
+    .field input[type="text"], .field input[type="number"]{ padding:12px; border:1px solid #d8dde6; border-radius:10px; flex:1; font-size:1.05rem; text-transform:uppercase; }
 
-    .panel-footer{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:16px; }
-    .actions-left{ display:flex; gap:10px; align-items:center; }
-    .actions-right{ display:flex; gap:10px; align-items:center; }
+    .panel-footer{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:18px; }
+    .actions-left{ display:flex; gap:12px; align-items:center; }
+    .actions-right{ display:flex; gap:12px; align-items:center; }
 
-    .btn{ padding:10px 14px; border-radius:10px; border:0; cursor:pointer; font-weight:700; min-width:120px; }
+    .btn{ padding:12px 16px; border-radius:10px; border:0; cursor:pointer; font-weight:800; min-width:140px; font-size:1rem; }
     .btn.ghost{ background:#f3f6fb; color:var(--red); border:1px solid #e6edf9; }
     .btn.red{ background:var(--red-delivered); color:#fff; }
     .btn.yellow{ background:var(--yellow); color:#000; }
@@ -128,11 +142,15 @@
 
     .hidden{ display:none !important; }
 
-    @media (max-width:900px){ .topbar .title{ font-size:1.4rem; } .panel{ width:min(92%,720px); } }
+    @media (max-width:900px){ .topbar .title{ font-size:1.9rem; } .panel{ width:min(92%,720px); } .small-btn > div:first-child{ font-size:1.4rem; } .grid-btn{ font-size:1.6rem; padding:20px; } }
     @media (max-width:640px){
       .btn-grid{ grid-template-columns: repeat(2,1fr); }
       .field label{ min-width:110px; }
       .panel-footer{ flex-direction:column-reverse; align-items:stretch; }
+      .topbar .title{ font-size:1.6rem; margin-right:36px; }
+      .grid-btn{ font-size:1.5rem; padding:16px; }
+      .small-btn{ min-height:96px; padding:14px; }
+      .small-btn > div:first-child{ font-size:1.25rem; }
     }
   </style>
 </head>
@@ -143,22 +161,19 @@
   </div>
 
   <main>
-    <!-- HOME (welcome removed) -->
+    <!-- HOME (phrases descriptives supprimées) -->
     <div id="home" class="home">
       <div class="grid-main">
         <a class="grid-btn" id="openCadresMain" href="#" role="button">
           Synoptique des Cadres et Biolines
-          <span class="desc">Vue synthétique et gestion des cadres et biolines</span>
         </a>
 
         <a class="grid-btn" id="openEnginsMain" href="#" role="button">
           Synoptique des Engins
-          <span class="desc">Etat des engins et disponibilité</span>
         </a>
 
         <a class="grid-btn" id="openArchivesMain" href="#" role="button">
           Interventions archivées
-          <span class="desc">Historique des interventions</span>
         </a>
       </div>
     </div>
@@ -330,7 +345,6 @@
         store.cadres[i].Pression = v.Pression ?? '';
         store.cadres[i].State = v.State ?? (store.cadres[i].State || 'default');
         refreshCadreUI(i);
-        // if modal open and active is this object, refresh action button
         if (activeType === 'Cadre' && activeIdx === i) refreshActionButton();
       });
     }
@@ -347,7 +361,7 @@
       });
     }
 
-    // UI refresh functions (same rules as Cadres)
+    // UI refresh functions
     function refreshCadreUI(i){
       const d = store.cadres[i];
       const btn = document.getElementById(`cadre-${i}`);
@@ -386,7 +400,7 @@
       else btn.classList.add('state-default');
     }
 
-    // Modal state: keep track if it's Cadre or Bioline and index
+    // Modal state
     let activeType = null; // 'Cadre' or 'Bioline'
     let activeIdx = null;
 
@@ -396,7 +410,7 @@
       activeIdx = idx;
       const d = (type === 'Cadre') ? store.cadres[idx] : store.biolines[idx];
       panelTitle.textContent = `${type} n°${idx}`;
-      localisationInput.value = d.Localisation || '';
+      localisationInput.value = (d.Localisation || '').toString().toUpperCase();
       pressionInput.value = d.Pression || '';
       refreshActionButton();
       modal.style.display = 'flex';
@@ -422,10 +436,13 @@
       } catch(err){ console.error('liveWrite', err); }
     }, 300);
 
-    // Live input handlers (write immediately debounced)
+    // Live input handlers: Localisation uppercase and written uppercase
     localisationInput.addEventListener('input', (e) => {
       if (!activeType || !activeIdx) return;
-      const v = e.target.value;
+      const raw = e.target.value || '';
+      const v = raw.toUpperCase();
+      // reflect uppercase in the input immediately
+      if (e.target.value !== v) e.target.value = v;
       if (activeType === 'Cadre') store.cadres[activeIdx].Localisation = v;
       else store.biolines[activeIdx].Localisation = v;
       liveWrite(activeType, activeIdx, 'Localisation', v);
@@ -439,42 +456,47 @@
       liveWrite(activeType, activeIdx, 'Pression', v);
     });
 
-    // Valider: write both fields and close modal, without changing state/color
+    // Valider: write both fields (Localisation uppercased) and close modal
     validerBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       if (!activeType || !activeIdx) return;
-      const path = (activeType === 'Cadre') ? `Cadre/${activeIdx}` : `Bioline/${activeIdx}`;
-      const Localisation = localisationInput.value.trim();
-      const Pression = pressionInput.value.trim();
+      const type = activeType;
+      const idx = activeIdx;
+      const path = (type === 'Cadre') ? `Cadre/${idx}` : `Bioline/${idx}`;
+      const Localisation = (localisationInput.value || '').trim().toUpperCase();
+      const Pression = (pressionInput.value || '').trim();
       try {
         await update(ref(db, path), { Localisation, Pression });
       } catch(err){ console.error('valider', err); }
       closePanel();
     });
 
-    // Action button transitions for both types (same logic), then close modal
+    // Action button transitions: close immediately on click, then perform DB updates
     actionBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       if (!activeType || !activeIdx) return;
-      const path = (activeType === 'Cadre') ? `Cadre/${activeIdx}` : `Bioline/${activeIdx}`;
-      const cur = (activeType === 'Cadre') ? store.cadres[activeIdx] : store.biolines[activeIdx];
+      // capture current context
+      const type = activeType;
+      const idx = activeIdx;
+      const cur = (type === 'Cadre') ? { ...store.cadres[idx] } : { ...store.biolines[idx] };
+      // close UI immediately
+      closePanel();
+      const path = (type === 'Cadre') ? `Cadre/${idx}` : `Bioline/${idx}`;
       try {
         // Green/default -> Livrer => set delivered
         if (cur.State === 'default' || cur.State === 'disponible' || !cur.State) {
           await update(ref(db, path), { State: 'delivered' });
-          closePanel();
           return;
         }
-        // Red(delivered) -> Gonflage => set gonflage and Localisation 'VPCE / CT'
+        // Red(delivered) -> Gonflage => set gonflage and Localisation adjusted
         if (cur.State === 'delivered') {
-          await update(ref(db, path), { State: 'gonflage', Localisation: 'VPCE / CT' });
-          closePanel();
+          const newLoc = (type === 'Bioline') ? 'CT' : 'VPCE / CT';
+          await update(ref(db, path), { State: 'gonflage', Localisation: newLoc });
           return;
         }
         // Yellow(gonflage) -> Disponible CT => set default (green) and Pression 300
         if (cur.State === 'gonflage') {
           await update(ref(db, path), { State: 'default', Pression: '300' });
-          closePanel();
           return;
         }
       } catch(err){ console.error('actionBtn', err); }
