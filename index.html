@@ -98,6 +98,7 @@
       gap:10px;
       min-height:100px;
       transition: transform .12s cubic-bezier(.2,.9,.2,1), box-shadow .12s cubic-bezier(.2,.9,.2,1);
+      position:relative;
     }
     .small-btn:hover{
       transform: translateY(-6px);
@@ -117,6 +118,21 @@
     .state-gonflage{ background:var(--yellow); color:#000; }
     .state-disponible{ background:var(--green-light); color:#000; }
     .state-hs{ background:#000; color:#fff; }
+
+    /* surveillance badge (triangle with exclamation) */
+    .surv-badge {
+      width:22px; height:22px;
+      display:inline-flex; align-items:center; justify-content:center;
+      background:#ff4d4f; color:#fff; font-weight:900; border-radius:4px;
+      clip-path: polygon(50% 0%, 100% 100%, 0% 100%); /* triangle */
+      font-size:14px;
+      position:absolute;
+      bottom:8px;
+      right:8px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.12);
+    }
+    /* small exclamation center adjust */
+    .surv-badge span{ transform:translateY(-2px); }
 
     .modal-backdrop{ position:fixed; inset:0; background:rgba(8,10,12,0.45); display:none; align-items:center; justify-content:center; z-index:60; }
     .panel{ background:#fff; border-radius:12px; width:min(760px,96%); max-height:92vh; overflow:auto; padding:22px; box-shadow:0 18px 60px rgba(2,6,23,0.4); position:relative; }
@@ -139,6 +155,13 @@
     .field{ margin:12px 0; display:flex; gap:14px; align-items:center; }
     .field label{ min-width:150px; font-weight:800; color:#223; font-size:1rem; }
     .field input[type="text"], .field input[type="number"]{ padding:10px; border:1px solid #d8dde6; border-radius:10px; flex:1; font-size:1rem; text-transform:uppercase; }
+
+    /* surveillance specific: text input normal-case except first letter capitalized */
+    .field .surv-input{ text-transform:none; }
+
+    .surv-controls{ display:flex; gap:8px; align-items:center; }
+
+    .delete-surv { background:transparent; border:0; color:var(--red); font-weight:800; cursor:pointer; font-size:1.1rem; padding:6px; border-radius:6px; }
 
     .panel-footer{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:18px; }
     .actions-left{ display:flex; gap:12px; align-items:center; }
@@ -167,6 +190,7 @@
       .small-btn{ min-height:88px; padding:12px; }
       .small-btn > div:first-child{ font-size:1.05rem; }
       .hs-btn{ top:8px; right:8px; padding:6px 10px; }
+      .surv-badge{ width:18px; height:18px; font-size:12px; bottom:6px; right:6px; }
     }
   </style>
 </head>
@@ -234,6 +258,14 @@
         <input id="pressionInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" placeholder="ex: 300" />
       </div>
 
+      <div class="field">
+        <label>Surveillance :</label>
+        <div class="surv-controls" style="flex:1;">
+          <input id="survInput" class="surv-input" type="text" placeholder="Remarque de surveillance..." />
+          <button id="clearSurvBtn" class="delete-surv" title="Supprimer la surveillance">✕</button>
+        </div>
+      </div>
+
       <div class="panel-footer">
         <div class="actions-left">
           <button id="actionBtn" class="btn yellow">Gonflage</button>
@@ -262,6 +294,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    // UI refs
     const home = document.getElementById('home');
     const backBtn = document.getElementById('backBtn');
     const openCadresMain = document.getElementById('openCadresMain');
@@ -280,7 +313,10 @@
     const actionBtn = document.getElementById('actionBtn');
     const validerBtn = document.getElementById('validerBtn');
     const hsBtn = document.getElementById('hsBtn');
+    const survInput = document.getElementById('survInput');
+    const clearSurvBtn = document.getElementById('clearSurvBtn');
 
+    // store
     const store = { cadres: {}, biolines: {} };
 
     function showView(viewEl) {
@@ -303,24 +339,32 @@
     function cadrePath(n){ return `Cadre/${n}`; }
     function biolinePath(n){ return `Bioline/${n}`; }
 
+    // ensure nodes exist and add Surveillance key if missing
     async function ensureNodes(){
       for(let i=1;i<=10;i++){
         const snap = await get(ref(db, cadrePath(i)));
         if (!snap.exists()){
-          await set(ref(db, cadrePath(i)), { Localisation: '', Pression: '', State: 'default' });
+          await set(ref(db, cadrePath(i)), { Localisation: '', Pression: '', State: 'default', Surveillance: '' });
+        } else {
+          const v = snap.val() || {};
+          if (v.Surveillance === undefined) await update(ref(db, cadrePath(i)), { Surveillance: '' });
         }
       }
       for(let i=1;i<=5;i++){
         const snap = await get(ref(db, biolinePath(i)));
         if (!snap.exists()){
-          await set(ref(db, biolinePath(i)), { Localisation: '', Pression: '', State: 'default' });
+          await set(ref(db, biolinePath(i)), { Localisation: '', Pression: '', State: 'default', Surveillance: '' });
+        } else {
+          const v = snap.val() || {};
+          if (v.Surveillance === undefined) await update(ref(db, biolinePath(i)), { Surveillance: '' });
         }
       }
     }
     ensureNodes().catch(console.error);
 
+    // create UI buttons
     for(let i=1;i<=10;i++){
-      store.cadres[i] = { Localisation:'', Pression:'', State:'default' };
+      store.cadres[i] = { Localisation:'', Pression:'', State:'default', Surveillance: '' };
       const btn = document.createElement('button');
       btn.className = 'small-btn state-default';
       btn.id = `cadre-${i}`;
@@ -331,7 +375,7 @@
     }
 
     for(let i=1;i<=5;i++){
-      store.biolines[i] = { Localisation:'', Pression:'', State:'default' };
+      store.biolines[i] = { Localisation:'', Pression:'', State:'default', Surveillance: '' };
       const btn = document.createElement('button');
       btn.className = 'small-btn state-default';
       btn.id = `bioline-${i}`;
@@ -341,6 +385,7 @@
       biolinesGrid.appendChild(btn);
     }
 
+    // realtime listeners
     for(let i=1;i<=10;i++){
       const r = ref(db, `Cadre/${i}`);
       onValue(r, (snap) => {
@@ -348,6 +393,7 @@
         store.cadres[i].Localisation = v.Localisation ?? '';
         store.cadres[i].Pression = v.Pression ?? '';
         store.cadres[i].State = v.State ?? (store.cadres[i].State || 'default');
+        store.cadres[i].Surveillance = v.Surveillance ?? '';
         refreshCadreUI(i);
         if (activeType === 'Cadre' && activeIdx === i) refreshActionButton();
       });
@@ -360,15 +406,18 @@
         store.biolines[i].Localisation = v.Localisation ?? '';
         store.biolines[i].Pression = v.Pression ?? '';
         store.biolines[i].State = v.State ?? (store.biolines[i].State || 'default');
+        store.biolines[i].Surveillance = v.Surveillance ?? '';
         refreshBiolineUI(i);
         if (activeType === 'Bioline' && activeIdx === i) refreshActionButton();
       });
     }
 
+    // UI refresh with surveillance badge
     function refreshCadreUI(i){
       const d = store.cadres[i];
       const btn = document.getElementById(`cadre-${i}`);
       const meta = document.getElementById(`meta-cadre-${i}`);
+      // build summary lines
       if (d.State === 'disponible' || d.State === 'default') {
         meta.innerHTML = '';
       } else {
@@ -377,12 +426,23 @@
         if (d.Pression) lines.push(`Pression: ${d.Pression}`);
         meta.innerHTML = lines.map(l=>`<div>${l}</div>`).join('');
       }
+      // remove previous state classes and surveillance badge
       btn.classList.remove('state-default','state-delivered','state-gonflage','state-disponible','state-hs');
+      const existingBadge = btn.querySelector('.surv-badge');
+      if (existingBadge) existingBadge.remove();
+      // add state class
       if (d.State === 'delivered') btn.classList.add('state-delivered');
       else if (d.State === 'gonflage') btn.classList.add('state-gonflage');
       else if (d.State === 'disponible') btn.classList.add('state-disponible');
       else if (d.State === 'HS') btn.classList.add('state-hs');
       else btn.classList.add('state-default');
+      // add surveillance badge if surveillance text exists
+      if (d.Surveillance && d.Surveillance.trim() !== '') {
+        const badge = document.createElement('div');
+        badge.className = 'surv-badge';
+        badge.innerHTML = `<span>!</span>`;
+        btn.appendChild(badge);
+      }
     }
 
     function refreshBiolineUI(i){
@@ -398,17 +458,26 @@
         meta.innerHTML = lines.map(l=>`<div>${l}</div>`).join('');
       }
       btn.classList.remove('state-default','state-delivered','state-gonflage','state-disponible','state-hs');
+      const existingBadge = btn.querySelector('.surv-badge');
+      if (existingBadge) existingBadge.remove();
       if (d.State === 'delivered') btn.classList.add('state-delivered');
       else if (d.State === 'gonflage') btn.classList.add('state-gonflage');
       else if (d.State === 'disponible') btn.classList.add('state-disponible');
       else if (d.State === 'HS') btn.classList.add('state-hs');
       else btn.classList.add('state-default');
+      if (d.Surveillance && d.Surveillance.trim() !== '') {
+        const badge = document.createElement('div');
+        badge.className = 'surv-badge';
+        badge.innerHTML = `<span>!</span>`;
+        btn.appendChild(badge);
+      }
     }
 
+    // modal state
     let activeType = null; // 'Cadre' or 'Bioline'
     let activeIdx = null;
 
-    // temporary storage to restore values if user clicked accidentally
+    // temp restore vars for previous behavior
     let tempPrevLocalisation = null;
     let tempPrevPression = null;
     let hasClearedLocalisation = false;
@@ -421,6 +490,9 @@
       panelTitle.textContent = `${type} n°${idx}`;
       localisationInput.value = (d.Localisation || '').toString().toUpperCase();
       pressionInput.value = d.Pression || '';
+      // Surveillance field: display with first letter uppercase and rest as-is
+      survInput.value = formatSurveillanceForInput(d.Surveillance || '');
+      // reset temps
       tempPrevLocalisation = localisationInput.value;
       tempPrevPression = pressionInput.value;
       hasClearedLocalisation = false;
@@ -429,7 +501,7 @@
       hsBtn.classList.remove('hidden');
       modal.style.display = 'flex';
       modal.setAttribute('aria-hidden','false');
-      // Focus on Pression as requested
+      // focus on Pression as requested
       setTimeout(()=> pressionInput.focus(),50);
     }
 
@@ -455,7 +527,7 @@
       } catch(err){ console.error('liveWrite', err); }
     }, 300);
 
-    // HS button click: close panel then set HS state in DB
+    // HS button: set HS state and values
     hsBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       if (!activeType || !activeIdx) return;
@@ -468,7 +540,7 @@
       } catch(err){ console.error('hsBtn', err); }
     });
 
-    // Field focus handlers: clear on focus but remember previous value
+    // Localisation focus/blur/input (same as before)
     localisationInput.addEventListener('focus', (e) => {
       if (!activeType || !activeIdx) return;
       if (!hasClearedLocalisation) {
@@ -477,7 +549,6 @@
         hasClearedLocalisation = true;
       }
     });
-
     localisationInput.addEventListener('blur', (e) => {
       if (!activeType || !activeIdx) return;
       const v = (e.target.value || '').trim();
@@ -486,7 +557,6 @@
         hasClearedLocalisation = false;
       }
     });
-
     localisationInput.addEventListener('input', (e) => {
       if (!activeType || !activeIdx) return;
       const raw = e.target.value || '';
@@ -497,7 +567,7 @@
       liveWrite(activeType, activeIdx, 'Localisation', v);
     });
 
-    // Pression focus/blur restore behavior
+    // Pression focus/blur/input
     pressionInput.addEventListener('focus', (e) => {
       if (!activeType || !activeIdx) return;
       if (!hasClearedPression) {
@@ -506,7 +576,6 @@
         hasClearedPression = true;
       }
     });
-
     pressionInput.addEventListener('blur', (e) => {
       if (!activeType || !activeIdx) return;
       const v = (e.target.value || '').trim();
@@ -515,7 +584,6 @@
         hasClearedPression = false;
       }
     });
-
     pressionInput.addEventListener('input', (e) => {
       if (!activeType || !activeIdx) return;
       const v = e.target.value;
@@ -524,7 +592,45 @@
       liveWrite(activeType, activeIdx, 'Pression', v);
     });
 
-    // Valider: write both fields and close modal, restore if empty
+    // Surveillance helpers: format first letter uppercase only for display
+    function formatSurveillanceForInput(s){
+      if (!s) return '';
+      const trim = s.trim();
+      if (trim === '') return '';
+      return trim.charAt(0).toUpperCase() + trim.slice(1);
+    }
+    function normalizeSurveillanceForStore(s){
+      if (!s) return '';
+      return s.trim();
+    }
+
+    // Surveillance input: update store and live write (first letter capitalized on input display)
+    survInput.addEventListener('input', (e) => {
+      if (!activeType || !activeIdx) return;
+      // keep display with first letter uppercase but keep rest as typed
+      const raw = e.target.value || '';
+      const display = raw.length > 0 ? raw.charAt(0).toUpperCase() + raw.slice(1) : '';
+      if (e.target.value !== display) e.target.value = display;
+      const v = normalizeSurveillanceForStore(display);
+      if (activeType === 'Cadre') store.cadres[activeIdx].Surveillance = v;
+      else store.biolines[activeIdx].Surveillance = v;
+      liveWrite(activeType, activeIdx, 'Surveillance', v);
+    });
+
+    // Clear surveillance button: remove surveillance field and badge in DB
+    clearSurvBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      if (!activeType || !activeIdx) return;
+      const type = activeType;
+      const idx = activeIdx;
+      const path = (type === 'Cadre') ? `Cadre/${idx}` : `Bioline/${idx}`;
+      survInput.value = '';
+      try {
+        await update(ref(db, path), { Surveillance: '' });
+      } catch(err){ console.error('clearSurv', err); }
+    });
+
+    // Valider: write localisation, pression, surveillance (restore previous if needed)
     validerBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       if (!activeType || !activeIdx) return;
@@ -533,6 +639,7 @@
       const path = (type === 'Cadre') ? `Cadre/${idx}` : `Bioline/${idx}`;
       let Localisation = (localisationInput.value || '').trim().toUpperCase();
       let Pression = (pressionInput.value || '').trim();
+      let Surveillance = normalizeSurveillanceForStore(survInput.value || '');
 
       if (Localisation === '' && tempPrevLocalisation !== null) {
         Localisation = tempPrevLocalisation;
@@ -540,14 +647,13 @@
       if (Pression === '' && tempPrevPression !== null) {
         Pression = tempPrevPression;
       }
-
       try {
-        await update(ref(db, path), { Localisation, Pression });
+        await update(ref(db, path), { Localisation, Pression, Surveillance });
       } catch(err){ console.error('valider', err); }
       closePanel();
     });
 
-    // Action button: close immediately on click, then perform DB updates
+    // Action button logic with HS handling and HS->Disponible behaviour per type
     actionBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       if (!activeType || !activeIdx) return;
@@ -557,23 +663,23 @@
       closePanel();
       const path = (type === 'Cadre') ? `Cadre/${idx}` : `Bioline/${idx}`;
       try {
-        // Green/default -> Livrer => set delivered
+        // Green/default -> Livrer => delivered
         if (cur.State === 'default' || cur.State === 'disponible' || !cur.State) {
           await update(ref(db, path), { State: 'delivered' });
           return;
         }
-        // Red(delivered) -> Gonflage => set gonflage and Localisation adjusted per type
+        // delivered -> gonflage
         if (cur.State === 'delivered') {
           const newLoc = (type === 'Bioline') ? 'CT' : 'VPCE / CT';
           await update(ref(db, path), { State: 'gonflage', Localisation: newLoc });
           return;
         }
-        // Yellow(gonflage) -> Disponible CT => set default (green) and Pression 300
+        // gonflage -> disponible
         if (cur.State === 'gonflage') {
           await update(ref(db, path), { State: 'default', Pression: '300' });
           return;
         }
-        // HS -> Disponible CT : restore localisation depending on type and set default+Pression 300
+        // HS -> Disponible CT: set localisation per type
         if (cur.State === 'HS') {
           const newLoc = (type === 'Bioline') ? 'CT' : 'VPCE / CT';
           await update(ref(db, path), { State: 'default', Pression: '300', Localisation: newLoc });
@@ -582,28 +688,24 @@
       } catch(err){ console.error('actionBtn', err); }
     });
 
-    // Refresh action button text/color according to current object's state
+    // refresh action button text/color
     function refreshActionButton(){
       if (!activeType || !activeIdx) return;
       const cur = (activeType === 'Cadre') ? store.cadres[activeIdx] : store.biolines[activeIdx];
       actionBtn.className = 'btn';
-      // If HS, show 'Disponible CT' as requested
-      if (cur.State === 'HS') {
+      if (cur.State === 'HS' || cur.State === 'gonflage') {
         actionBtn.textContent = 'Disponible CT';
         actionBtn.classList.add('green');
       } else if (cur.State === 'delivered') {
         actionBtn.textContent = 'Gonflage';
         actionBtn.classList.add('yellow');
-      } else if (cur.State === 'gonflage') {
-        actionBtn.textContent = 'Disponible CT';
-        actionBtn.classList.add('green');
       } else {
         actionBtn.textContent = 'Livraison';
         actionBtn.classList.add('red');
       }
     }
 
-    // Modal close on backdrop or Escape
+    // modal close handlers
     modal.addEventListener('click', (e) => { if (e.target === modal) closePanel(); });
     window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.style.display === 'flex') closePanel(); });
 
