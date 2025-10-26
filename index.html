@@ -28,7 +28,7 @@
       display:flex;
       flex-direction:column;
       min-height:100%;
-      font-size:15px; /* police générale légèrement réduite */
+      font-size:15px;
     }
 
     .topbar{
@@ -116,10 +116,26 @@
     .state-delivered{ background:var(--red-delivered); color:#fff; }
     .state-gonflage{ background:var(--yellow); color:#000; }
     .state-disponible{ background:var(--green-light); color:#000; }
+    .state-hs{ background:#000; color:#fff; }
 
     .modal-backdrop{ position:fixed; inset:0; background:rgba(8,10,12,0.45); display:none; align-items:center; justify-content:center; z-index:60; }
-    .panel{ background:#fff; border-radius:12px; width:min(760px,96%); max-height:92vh; overflow:auto; padding:22px; box-shadow:0 18px 60px rgba(2,6,23,0.4); }
+    .panel{ background:#fff; border-radius:12px; width:min(760px,96%); max-height:92vh; overflow:auto; padding:22px; box-shadow:0 18px 60px rgba(2,6,23,0.4); position:relative; } /* position relative for HS button */
     .panel h2{ margin:0 0 12px 0; font-size:1.5rem; }
+
+    /* Hors Service button: top-right */
+    .hs-btn {
+      position:absolute;
+      top:12px;
+      right:12px;
+      background:#000;
+      color:#fff;
+      border:0;
+      padding:8px 12px;
+      border-radius:8px;
+      font-weight:800;
+      cursor:pointer;
+      z-index:5;
+    }
 
     .field{ margin:12px 0; display:flex; gap:14px; align-items:center; }
     .field label{ min-width:150px; font-weight:800; color:#223; font-size:1rem; }
@@ -151,6 +167,7 @@
       .grid-btn{ font-size:1.2rem; padding:12px; }
       .small-btn{ min-height:88px; padding:12px; }
       .small-btn > div:first-child{ font-size:1.05rem; }
+      .hs-btn{ top:8px; right:8px; padding:6px 10px; }
     }
   </style>
 </head>
@@ -204,6 +221,9 @@
 
   <div class="modal-backdrop" id="modal" role="dialog" aria-hidden="true">
     <div class="panel" role="document" aria-labelledby="panelTitle">
+      <!-- HS button top-right -->
+      <button id="hsBtn" class="hs-btn hidden" title="Mettre Hors Service">Hors Service</button>
+
       <h2 id="panelTitle">Objet n°X</h2>
 
       <div class="field">
@@ -213,7 +233,6 @@
 
       <div class="field">
         <label>Pression :</label>
-        <!-- inputmode et pattern pour forcer clavier numérique sur mobiles -->
         <input id="pressionInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" placeholder="ex: 300" />
       </div>
 
@@ -262,6 +281,7 @@
     const pressionInput = document.getElementById('pressionInput');
     const actionBtn = document.getElementById('actionBtn');
     const validerBtn = document.getElementById('validerBtn');
+    const hsBtn = document.getElementById('hsBtn');
 
     const store = { cadres: {}, biolines: {} };
 
@@ -359,10 +379,11 @@
         if (d.Pression) lines.push(`Pression: ${d.Pression}`);
         meta.innerHTML = lines.map(l=>`<div>${l}</div>`).join('');
       }
-      btn.classList.remove('state-default','state-delivered','state-gonflage','state-disponible');
+      btn.classList.remove('state-default','state-delivered','state-gonflage','state-disponible','state-hs');
       if (d.State === 'delivered') btn.classList.add('state-delivered');
       else if (d.State === 'gonflage') btn.classList.add('state-gonflage');
       else if (d.State === 'disponible') btn.classList.add('state-disponible');
+      else if (d.State === 'HS') btn.classList.add('state-hs');
       else btn.classList.add('state-default');
     }
 
@@ -378,10 +399,11 @@
         if (d.Pression) lines.push(`Pression: ${d.Pression}`);
         meta.innerHTML = lines.map(l=>`<div>${l}</div>`).join('');
       }
-      btn.classList.remove('state-default','state-delivered','state-gonflage','state-disponible');
+      btn.classList.remove('state-default','state-delivered','state-gonflage','state-disponible','state-hs');
       if (d.State === 'delivered') btn.classList.add('state-delivered');
       else if (d.State === 'gonflage') btn.classList.add('state-gonflage');
       else if (d.State === 'disponible') btn.classList.add('state-disponible');
+      else if (d.State === 'HS') btn.classList.add('state-hs');
       else btn.classList.add('state-default');
     }
 
@@ -399,7 +421,6 @@
       activeIdx = idx;
       const d = (type === 'Cadre') ? store.cadres[idx] : store.biolines[idx];
       panelTitle.textContent = `${type} n°${idx}`;
-      // set inputs with uppercase localisation
       localisationInput.value = (d.Localisation || '').toString().toUpperCase();
       pressionInput.value = d.Pression || '';
       // reset temp trackers
@@ -408,6 +429,9 @@
       hasClearedLocalisation = false;
       hasClearedPression = false;
       refreshActionButton();
+      // show HS button except maybe decide to hide when already HS? still show to allow setting again
+      hsBtn.classList.remove('hidden');
+      // If state is HS we want action to show "Disponible CT" (handled in refreshActionButton)
       modal.style.display = 'flex';
       modal.setAttribute('aria-hidden','false');
       setTimeout(()=> localisationInput.focus(),50);
@@ -423,6 +447,7 @@
       tempPrevPression = null;
       hasClearedLocalisation = false;
       hasClearedPression = false;
+      hsBtn.classList.add('hidden');
     }
 
     function debounce(fn, wait=300){ let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), wait); }; }
@@ -435,10 +460,23 @@
       } catch(err){ console.error('liveWrite', err); }
     }, 300);
 
+    // HS button click: close panel then set HS state in DB
+    hsBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      if (!activeType || !activeIdx) return;
+      const type = activeType;
+      const idx = activeIdx;
+      const path = (type === 'Cadre') ? `Cadre/${idx}` : `Bioline/${idx}`;
+      // close UI immediately
+      closePanel();
+      try {
+        await update(ref(db, path), { State: 'HS', Localisation: 'HS', Pression: '0' });
+      } catch(err){ console.error('hsBtn', err); }
+    });
+
     // Field focus handlers: clear on focus but remember previous value
     localisationInput.addEventListener('focus', (e) => {
       if (!activeType || !activeIdx) return;
-      // store previous value only the first time focus occurs for this open panel
       if (!hasClearedLocalisation) {
         tempPrevLocalisation = localisationInput.value;
         localisationInput.value = '';
@@ -446,7 +484,6 @@
       }
     });
 
-    // If user blurs and left empty, restore previous (safety on accidental clear)
     localisationInput.addEventListener('blur', (e) => {
       if (!activeType || !activeIdx) return;
       const v = (e.target.value || '').trim();
@@ -456,7 +493,6 @@
       }
     });
 
-    // Localisation input: uppercase + live write
     localisationInput.addEventListener('input', (e) => {
       if (!activeType || !activeIdx) return;
       const raw = e.target.value || '';
@@ -467,7 +503,6 @@
       liveWrite(activeType, activeIdx, 'Localisation', v);
     });
 
-    // Pression focus/blur similar logic (and numeric keyboard already requested via input attributes)
     pressionInput.addEventListener('focus', (e) => {
       if (!activeType || !activeIdx) return;
       if (!hasClearedPression) {
@@ -504,7 +539,6 @@
       let Localisation = (localisationInput.value || '').trim().toUpperCase();
       let Pression = (pressionInput.value || '').trim();
 
-      // restore if empty and previous exists
       if (Localisation === '' && tempPrevLocalisation !== null) {
         Localisation = tempPrevLocalisation;
       }
@@ -529,31 +563,47 @@
       closePanel();
       const path = (type === 'Cadre') ? `Cadre/${idx}` : `Bioline/${idx}`;
       try {
+        // Green/default -> Livrer => set delivered
         if (cur.State === 'default' || cur.State === 'disponible' || !cur.State) {
           await update(ref(db, path), { State: 'delivered' });
           return;
         }
+        // Red(delivered) -> Gonflage => set gonflage and Localisation adjusted
         if (cur.State === 'delivered') {
           const newLoc = (type === 'Bioline') ? 'CT' : 'VPCE / CT';
           await update(ref(db, path), { State: 'gonflage', Localisation: newLoc });
           return;
         }
-        if (cur.State === 'gonflage') {
+        // Yellow(gonflage) OR HS -> Disponible CT => set default (green) and Pression 300
+        if (cur.State === 'gonflage' || cur.State === 'HS') {
           await update(ref(db, path), { State: 'default', Pression: '300' });
           return;
         }
       } catch(err){ console.error('actionBtn', err); }
     });
 
+    // Refresh action button text/color according to current object's state
     function refreshActionButton(){
       if (!activeType || !activeIdx) return;
       const cur = (activeType === 'Cadre') ? store.cadres[activeIdx] : store.biolines[activeIdx];
       actionBtn.className = 'btn';
-      if (cur.State === 'delivered') { actionBtn.textContent = 'Gonflage'; actionBtn.classList.add('yellow'); }
-      else if (cur.State === 'gonflage') { actionBtn.textContent = 'Disponible CT'; actionBtn.classList.add('green'); }
-      else { actionBtn.textContent = 'Livraison'; actionBtn.classList.add('red'); }
+      // If HS, show 'Disponible CT' as requested (acts like gonflage -> disponible)
+      if (cur.State === 'HS') {
+        actionBtn.textContent = 'Disponible CT';
+        actionBtn.classList.add('green');
+      } else if (cur.State === 'delivered') {
+        actionBtn.textContent = 'Gonflage';
+        actionBtn.classList.add('yellow');
+      } else if (cur.State === 'gonflage') {
+        actionBtn.textContent = 'Disponible CT';
+        actionBtn.classList.add('green');
+      } else {
+        actionBtn.textContent = 'Livraison';
+        actionBtn.classList.add('red');
+      }
     }
 
+    // Modal close on backdrop or Escape
     modal.addEventListener('click', (e) => { if (e.target === modal) closePanel(); });
     window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.style.display === 'flex') closePanel(); });
 
