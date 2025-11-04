@@ -13,9 +13,13 @@
       --btn-border:rgba(0,0,0,0.06);
       --shadow:rgba(16,24,40,0.06);
       --text:#0b1020;
-      --green-light:#d9f2d9;
-      --green-strong:#2ca14b;
-      --yellow:#f2c94c;
+      --green-lighter:#7fe59a;
+      --green-visible-dark:#2fa95a;
+      --green-dark:#1f8a3f;
+      --purple:#8a5acf;
+      --blueviolet:#5560d6;
+      --black:#000;
+      --muted:#8b949e;
       --radius:12px;
       font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
     }
@@ -78,12 +82,14 @@
     .submenu{ display:flex; flex-direction:column; gap:20px; }
     .subtitle{ font-size:1.35rem; font-weight:800; color:var(--text); margin:8px 0; }
 
+    .subtitle-engins { color:#000; }
+
     .section-title{ font-size:1.1rem; font-weight:900; color:#9b1e1e; margin:10px 0; }
 
     .btn-grid{ display:grid; grid-template-columns: repeat(auto-fill,minmax(210px,1fr)); gap:14px; margin-bottom:18px; }
 
     .small-btn{
-      background:var(--green-light);
+      background:var(--green-lighter);
       border:1px solid var(--btn-border);
       border-radius:12px;
       padding:16px;
@@ -113,13 +119,12 @@
 
     .meta-vertical{ color:#43494d; font-weight:700; font-size:0.95rem; display:flex; flex-direction:column; gap:6px; align-items:center; text-align:center; }
 
-    .state-default{ background:var(--green-light); color:#000; }
+    .state-default{ background:var(--green-lighter); color:#000; }
     .state-delivered{ background:var(--red-delivered); color:#fff; }
     .state-gonflage{ background:var(--yellow); color:#000; }
-    .state-disponible{ background:var(--green-light); color:#000; }
+    .state-disponible{ background:var(--green-lighter); color:#000; }
     .state-hs{ background:#000; color:#fff; }
 
-    /* surveillance badge (triangle with exclamation) */
     .surv-badge {
       width:22px; height:22px;
       display:inline-flex; align-items:center; justify-content:center;
@@ -153,9 +158,8 @@
 
     .field{ margin:12px 0; display:flex; gap:14px; align-items:center; }
     .field label{ min-width:150px; font-weight:800; color:#223; font-size:1rem; }
-    .field input[type="text"], .field input[type="number"]{ padding:10px; border:1px solid #d8dde6; border-radius:10px; flex:1; font-size:1rem; text-transform:uppercase; }
+    .field input[type="text"], .field input[type="number"], .field input[type="date"]{ padding:10px; border:1px solid #d8dde6; border-radius:10px; flex:1; font-size:1rem; }
 
-    /* surveillance specific: text input normal-case except first letter capitalized */
     .field .surv-input{ text-transform:none; }
 
     .surv-controls{ display:flex; gap:8px; align-items:center; }
@@ -163,7 +167,7 @@
     .delete-surv { background:transparent; border:0; color:var(--red); font-weight:800; cursor:pointer; font-size:1.1rem; padding:6px; border-radius:6px; }
 
     .press-gd { display:flex; gap:8px; width:100%; }
-    .press-gd input { flex:1; text-transform:none; } /* numeric, no uppercase transformation visually */
+    .press-gd input { flex:1; text-transform:none; }
 
     .panel-footer{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:18px; }
     .actions-left{ display:flex; gap:12px; align-items:center; }
@@ -173,15 +177,85 @@
     .btn.ghost{ background:#f3f6fb; color:var(--red); border:1px solid #e6edf9; }
     .btn.red{ background:var(--red-delivered); color:#fff; }
     .btn.yellow{ background:var(--yellow); color:#000; }
-    .btn.green{ background:var(--green-strong); color:#fff; }
+    .btn.green{ background:var(--green-visible-dark); color:#fff; }
 
     .hidden{ display:none !important; }
+
+    .engin-list{ display:flex; flex-direction:column; gap:12px; margin-top:12px; }
+    .engin-card{ background:var(--card); border-radius:10px; padding:12px; box-shadow:0 6px 18px rgba(16,24,40,0.06); display:flex; flex-direction:column; gap:8px; }
+    .engin-card .title{ font-weight:900; font-size:1rem; color:var(--text); }
+    .kilo-row{ display:flex; gap:8px; align-items:center; }
+    .kilo-row input[type="number"]{ width:180px; padding:8px; border-radius:8px; border:1px solid #d8dde6; }
+    .plein-row{ display:flex; gap:8px; align-items:center; }
+    .plein-slider{ width:100%; }
+    .plein-labels{ display:flex; justify-content:space-between; font-size:0.9rem; color:#55606b; margin-top:4px; }
+    .separator{ height:1px; background:#e6e9ee; margin:14px 0; border-radius:2px; }
+
+    .igp-footer { margin-top:10px; color:#999; font-size:0.95rem; text-align:left; }
+
+    .igp-alerts {
+      margin-bottom:12px;
+      color:#7a2b2b;
+      font-weight:800;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      pointer-events: none;
+    }
+    .igp-alerts > div { pointer-events: auto; }
+
+    .ct-highlight { background: #fff3cd; border-radius:6px; padding:6px; }
+
+    /* Synoptique des Engins styles */
+    .engins-synoptique { display:flex; flex-direction:column; gap:18px; }
+    .engins-category-title {
+      color:var(--muted);
+      text-transform:uppercase;
+      font-weight:800;
+      font-size:0.9rem;
+      text-decoration:underline;
+      margin:6px 0 8px 0;
+    }
+    .engins-category {
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:flex-start;
+    }
+
+    .engins-vehicle {
+      background: var(--green-lighter);
+      color: var(--black);
+      border-radius:10px;
+      padding:10px 12px;
+      font-weight:800;
+      border: 2px solid var(--green-visible-dark);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:100px;
+      box-shadow: 0 4px 10px rgba(2,6,23,0.06);
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .engin-statut-0 { background: var(--green-lighter); color: var(--black); border-color: var(--green-visible-dark); }
+    .engin-statut-1 { background: var(--green-dark); color: var(--black); border-color: #175e2a; }
+    .engin-statut-2 { background: var(--red-delivered); color: #fff; border-color: #7a1b1b; }
+    .engin-statut-3 { background: var(--red); color: var(--black); border-color: #7a1b1b; }
+    .engin-statut-4 { background: #fff; color: var(--black); border-color: #d0d3d8; }
+    .engin-statut-5 { background: var(--blueviolet); color: var(--black); border-color: #4349b0; }
+
+    .engin-statut-11 { background: var(--black); color: #fff; border-color: #111; }
+    .engin-statut-12 { background: var(--purple); color: var(--black); border-color: #6f45b0; }
 
     @media (max-width:900px){
       .topbar .title{ font-size:1.8rem; }
       .panel{ width:min(92%,720px); }
       .small-btn > div:first-child{ font-size:1.2rem; }
       .grid-btn{ font-size:1.4rem; padding:16px; }
+      .engin-card .kilo-row input[type="number"]{ width:120px; }
+      .engins-vehicle{ min-width:90px; padding:8px 10px; }
     }
     @media (max-width:640px){
       .btn-grid{ grid-template-columns: repeat(2,1fr); }
@@ -193,7 +267,49 @@
       .small-btn > div:first-child{ font-size:1.05rem; }
       .hs-btn{ top:8px; right:8px; padding:6px 10px; }
       .surv-badge{ width:18px; height:18px; font-size:12px; bottom:6px; right:6px; }
+      .engins-vehicle{ min-width:80px; padding:8px; font-size:0.9rem; }
     }
+
+    /* popup positioned at click */
+    .veh-popup-backdrop {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: flex-start;
+      justify-content: flex-start;
+      z-index: 120;
+      pointer-events: none;
+    }
+    .veh-popup {
+      position: absolute;
+      transform: translate(0,0);
+      background: #fff;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 10px 30px rgba(2,6,23,0.3);
+      min-width: 220px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      pointer-events: auto;
+    }
+    .veh-popup .title {
+      font-weight:900;
+      font-size:0.98rem;
+      padding:6px 8px;
+      border-bottom:1px solid #eef1f6;
+    }
+    .veh-popup .opt {
+      padding:10px 12px;
+      border-radius:8px;
+      font-weight:800;
+      cursor:pointer;
+      text-align:center;
+      user-select:none;
+    }
+    .veh-popup .opt.available { background: var(--green-lighter); color: var(--black); border: 2px solid var(--green-visible-dark); }
+    .veh-popup .opt.unavailable { background: var(--black); color: #fff; border: 2px solid #111; }
+    .veh-popup .opt.manoeuvre { background: var(--purple); color: var(--black); border: 2px solid #6f45b0; }
   </style>
 </head>
 <body>
@@ -204,8 +320,11 @@
 
   <main>
     <div id="home" class="home">
+      <div id="igpAlerts" class="igp-alerts" aria-live="polite"></div>
+
       <div class="grid-main">
         <a class="grid-btn" id="openCadresMain" href="#" role="button">Synoptique des Cadres et Biolines</a>
+        <a class="grid-btn" id="openIGPMain" href="#" role="button">IGP</a>
         <a class="grid-btn" id="openEnginsMain" href="#" role="button">Synoptique des Engins</a>
         <a class="grid-btn" id="openArchivesMain" href="#" role="button">Interventions archivées</a>
       </div>
@@ -225,9 +344,81 @@
       </div>
     </section>
 
+    <section id="igpView" class="submenu hidden" aria-label="IGP">
+      <div class="subtitle">IGP</div>
+      <div class="section">
+        <div class="btn-grid" id="igpGrid" aria-label="IGP actions">
+          <a class="grid-btn" id="btnKilometrageMain" href="#" role="button">Kilométrage et Pleins des Engins</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="igpKilometrageView" class="submenu hidden" aria-label="Kilométrage et Pleins des Engins">
+      <div class="subtitle">Kilométrage et Pleins des Engins</div>
+      <div class="section">
+        <div id="enginsContainer" class="engin-list" aria-live="polite"></div>
+        <div id="igpFooter" class="igp-footer" aria-live="polite">Dernière actualisation le : --/--/----</div>
+      </div>
+    </section>
+
     <section id="enginsView" class="submenu hidden" aria-label="Synoptique des Engins">
-      <div class="subtitle">Synoptique des Engins</div>
-      <div style="color:#55606b;">Contenu Synoptique des Engins — à implémenter ou brancher sur vos données existantes.</div>
+      <div class="subtitle subtitle-engins">Synoptique des Engins</div>
+
+      <div class="engins-synoptique" role="region" aria-label="Liste des engins par catégorie">
+        <div>
+          <div class="engins-category-title">01 - Secours a personne</div>
+          <div class="engins-category">
+            <div class="engins-vehicle" data-engin="VSAV 01">VSAV 01</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="engins-category-title">02 - Incendie</div>
+          <div class="engins-category">
+            <div class="engins-vehicle" data-engin="FMOGP 01">FMOGP 01</div>
+            <div class="engins-vehicle" data-engin="VMR 01">VMR 01</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="engins-category-title">03 - Interventions diverses</div>
+          <div class="engins-category">
+            <div class="engins-vehicle" data-engin="VL 01">VL 01</div>
+            <div class="engins-vehicle" data-engin="VL 02">VL 02</div>
+            <div class="engins-vehicle" data-engin="VTU 01">VTU 01</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="engins-category-title">04 - Specialites</div>
+          <div class="engins-category">
+            <div class="engins-vehicle" data-engin="VIC 01">VIC 01</div>
+            <div class="engins-vehicle" data-engin="VPCE 01">VPCE 01</div>
+            <div class="engins-vehicle" data-engin="VPCE 02">VPCE 02</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="engins-category-title">05 - Commandement</div>
+          <div class="engins-category">
+            <div class="engins-vehicle" data-engin="VPCA 01">VPCA 01</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="engins-category-title">07 - Cellules et remorques</div>
+          <div class="engins-category">
+            <div class="engins-vehicle" data-engin="CPROTEC 01">CPROTEC 01</div>
+            <div class="engins-vehicle" data-engin="CE30 01">CE30 01</div>
+            <div class="engins-vehicle" data-engin="CE20 01">CE20 01</div>
+            <div class="engins-vehicle" data-engin="CC02 01">CC02 01</div>
+            <div class="engins-vehicle" data-engin="CDA 01">CDA 01</div>
+            <div class="engins-vehicle" data-engin="RARI 01">RARI 01</div>
+            <div class="engins-vehicle" data-engin="CTRANSAID 01">CTRANSAID 01</div>
+            <div class="engins-vehicle" data-engin="MPR 01">MPR 01</div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section id="archivesView" class="submenu hidden" aria-label="Interventions archivées">
@@ -236,6 +427,7 @@
     </section>
   </main>
 
+  <!-- modal pour cadres/biolines -->
   <div class="modal-backdrop" id="modal" role="dialog" aria-hidden="true">
     <div class="panel" role="document" aria-labelledby="panelTitle">
       <button id="hsBtn" class="hs-btn hidden" title="Mettre Hors Service">Hors Service</button>
@@ -279,6 +471,16 @@
     </div>
   </div>
 
+  <!-- popup actions véhicule (positionnée au clic) -->
+  <div class="veh-popup-backdrop" id="vehPopupBackdrop" aria-hidden="true">
+    <div class="veh-popup" id="vehPopup" role="dialog" aria-modal="true" aria-label="Options véhicule" style="display:none;">
+      <div class="title" id="vehPopupTitle">NOM VEHICULE</div>
+      <div class="opt available" data-val="0">Disponible</div>
+      <div class="opt unavailable" data-val="11">Indisponible</div>
+      <div class="opt manoeuvre" data-val="12">Manoeuvre</div>
+    </div>
+  </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
     import { getDatabase, ref, onValue, update, set, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
@@ -288,7 +490,7 @@
       authDomain: "osiris-roc-1-0.firebaseapp.com",
       databaseURL: "https://osiris-roc-1-0-default-rtdb.europe-west1.firebasedatabase.app",
       projectId: "osiris-roc-1-0",
-      storageBucket: "osiris-roc-1-0.firebasestorage.app",
+      storageBucket: "osiris-roc-1-0-firebasestorage.app",
       messagingSenderId: "794382198691",
       appId: "1:794382198691:web:374f549533dbaa1fc79c16"
     };
@@ -300,13 +502,21 @@
     const home = document.getElementById('home');
     const backBtn = document.getElementById('backBtn');
     const openCadresMain = document.getElementById('openCadresMain');
+    const openIGPMain = document.getElementById('openIGPMain');
     const openEnginsMain = document.getElementById('openEnginsMain');
     const openArchivesMain = document.getElementById('openArchivesMain');
     const cadresView = document.getElementById('cadresView');
+    const igpView = document.getElementById('igpView');
+    const igpKilometrageView = document.getElementById('igpKilometrageView');
     const enginsView = document.getElementById('enginsView');
     const archivesView = document.getElementById('archivesView');
     const cadresGrid = document.getElementById('cadresGrid');
     const biolinesGrid = document.getElementById('biolinesGrid');
+    const igpGrid = document.getElementById('igpGrid');
+    const enginsContainer = document.getElementById('enginsContainer');
+    const igpFooter = document.getElementById('igpFooter');
+    const igpAlerts = document.getElementById('igpAlerts');
+    const btnKilometrageMain = document.getElementById('btnKilometrageMain');
 
     const modal = document.getElementById('modal');
     const panelTitle = document.getElementById('panelTitle');
@@ -322,164 +532,420 @@
     const survInput = document.getElementById('survInput');
     const clearSurvBtn = document.getElementById('clearSurvBtn');
 
+    const vehPopupBackdrop = document.getElementById('vehPopupBackdrop');
+    const vehPopup = document.getElementById('vehPopup');
+    const vehPopupTitle = document.getElementById('vehPopupTitle');
+
     // Local store
-    const store = { cadres: {}, biolines: {} };
+    const store = { cadres: {}, biolines: {}, engins: {}, enginStatus: {} };
 
     function showView(viewEl) {
       home.classList.add('hidden');
-      [cadresView, enginsView, archivesView].forEach(s => s.classList.add('hidden'));
+      [cadresView, igpView, igpKilometrageView, enginsView, archivesView].forEach(s => s.classList.add('hidden'));
       viewEl.classList.remove('hidden');
       backBtn.classList.remove('hidden');
     }
     function showHome() {
-      [cadresView, enginsView, archivesView].forEach(s => s.classList.add('hidden'));
+      [cadresView, igpView, igpKilometrageView, enginsView, archivesView].forEach(s => s.classList.add('hidden'));
       home.classList.remove('hidden');
       backBtn.classList.add('hidden');
     }
 
-    openCadresMain.addEventListener('click', (e)=>{ e.preventDefault(); showView(cadresView); });
+    openCadresMain.addEventListener('click', (e)=>{ e.preventDefault(); renderCadresAndBiolines(); showView(cadresView); });
+    openIGPMain.addEventListener('click', (e)=>{ e.preventDefault(); showView(igpView); });
     openEnginsMain.addEventListener('click', (e)=>{ e.preventDefault(); showView(enginsView); });
     openArchivesMain.addEventListener('click', (e)=>{ e.preventDefault(); showView(archivesView); });
     backBtn.addEventListener('click', (e)=>{ e.preventDefault(); showHome(); });
 
-    function cadrePath(n){ return `Cadre/${n}`; }
-    function biolinePath(n){ return `Bioline/${n}`; }
+    // IGP -> Kilométrage button
+    btnKilometrageMain.addEventListener('click', (e) => {
+      e.preventDefault();
+      renderKilometrageView();
+      showView(igpKilometrageView);
+      setTimeout(() => checkUpcomingCTsAndNotify(), 100);
+    });
 
-    // Helper to return default pressure value when setting Disponible for a bioline index
-    function defaultBiolinePressureForIndex(idx){
-      return (idx === 3 || idx === 5) ? '200' : '300';
+    function enginPath(name){ return `Engin/${encodeURIComponent(name)}`; }
+    function enginStatutPath(name){ return `Engin/${encodeURIComponent(name)}Statut`; }
+
+    // Vehicle lists
+    const vehiclesWithPlein = [
+      "VL 01 Astreinte",
+      "VL 02 Site",
+      "VMR 01",
+      "FMOGP 01",
+      "VPCE 01",
+      "VPCA 01",
+      "VPCE 02",
+      "VTU 01",
+      "VIC 01",
+      "Ambulance 01"
+    ];
+    const displayedEngins = [
+      "VSAV 01","FMOGP 01","VMR 01","VL 01","VL 02","VTU 01","VIC 01",
+      "VPCE 01","VPCE 02","VPCA 01","CPROTEC 01","CE30 01","CE20 01",
+      "CC02 01","CDA 01","RARI 01","CTRANSAID 01","MPR 01"
+    ];
+    const vehiclesKiloOnly = ["Compresseur BAUER","Compresseur BCH"];
+
+    // Format date utilities
+    function formatDateToday(d = new Date()){
+      const dd = String(d.getDate()).padStart(2,'0');
+      const mm = String(d.getMonth()+1).padStart(2,'0');
+      const yyyy = d.getFullYear();
+      return `${dd}/${mm}/${yyyy}`;
+    }
+    function dateInputToDisplay(value){
+      if (!value) return '';
+      const parts = String(value).split('-');
+      if (parts.length !== 3) return value;
+      return `${parts[2].padStart(2,'0')}/${parts[1].padStart(2,'0')}/${parts[0]}`;
+    }
+    function displayToDateInput(display){
+      if (!display) return '';
+      const parts = String(display).split('/');
+      if (parts.length !== 3) return '';
+      return `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
     }
 
-    // Ensure nodes exist and set bioline default Pression for #3 and #5 to 200
-    async function ensureNodes(){
-      for(let i=1;i<=10;i++){
-        const snap = await get(ref(db, cadrePath(i)));
-        if (!snap.exists()){
-          await set(ref(db, cadrePath(i)), { Localisation: '', Pression: '', State: 'default', Surveillance: '' });
-        } else {
-          const v = snap.val() || {};
-          if (v.Surveillance === undefined) await update(ref(db, cadrePath(i)), { Surveillance: '' });
-          if (v.Pression === undefined) await update(ref(db, cadrePath(i)), { Pression: '' });
+    // IGP date write/listen
+    async function setIGPDateToToday(){
+      const dateStr = formatDateToday();
+      try { await set(ref(db, 'IGP/DateIGP'), dateStr); } catch(err){ console.error('setIGPDateToToday', err); }
+    }
+    function listenIGPDate(){
+      try {
+        onValue(ref(db, 'IGP/DateIGP'), (snap) => {
+          const v = snap.val();
+          if (v) igpFooter.textContent = `Dernière actualisation le : ${v}`;
+          else igpFooter.textContent = `Dernière actualisation le : --/--/----`;
+        });
+      } catch(err){ console.error('listenIGPDate', err); }
+    }
+    listenIGPDate();
+
+    // Ensure engin nodes exist (kilométrage/plein)
+    async function ensureEngins(){
+      const all = vehiclesWithPlein.concat(vehiclesKiloOnly);
+      for(const name of all){
+        const path = enginPath(name);
+        try {
+          const snap = await get(ref(db, path));
+          if (!snap.exists()){
+            const init = { Kilometrage: '', CT: '', Plein: (vehiclesWithPlein.includes(name) ? '0' : undefined) };
+            if (init.Plein === undefined) delete init.Plein;
+            await set(ref(db, path), init);
+          } else {
+            const v = snap.val() || {};
+            const updates = {};
+            if (v.Kilometrage === undefined) updates.Kilometrage = '';
+            if (v.CT === undefined) updates.CT = '';
+            if (vehiclesWithPlein.includes(name) && v.Plein === undefined) updates.Plein = '0';
+            if (Object.keys(updates).length) await update(ref(db, path), updates);
+          }
+        } catch(err){ console.error('ensureEngins', name, err); }
+      }
+    }
+    ensureEngins().catch(console.error);
+
+    // Kilométrage view rendering
+    let kilometrageRendered = false;
+    function renderKilometrageView(){
+      if (kilometrageRendered) return;
+      enginsContainer.innerHTML = '';
+      for(const name of vehiclesWithPlein){
+        const card = document.createElement('div');
+        card.className = 'engin-card';
+        card.id = `engin-card-${encodeId(name)}`;
+        card.innerHTML = `
+          <div class="title">${escapeHtml(name)}</div>
+
+          <div class="kilo-row">
+            <label style="min-width:120px;font-weight:700;">Kilométrage :</label>
+            <input type="number" min="0" step="1" class="kilo-input" data-engin="${escapeAttr(name)}" placeholder="km" />
+          </div>
+
+          <div class="plein-row">
+            <label style="min-width:120px;font-weight:700;">Plein :</label>
+            <input type="range" min="0" max="7" step="1" class="plein-slider" data-engin="${escapeAttr(name)}" />
+          </div>
+          <div class="plein-labels"><span>Empty</span><span style="text-align:center">1/2</span><span style="text-align:right">Full</span></div>
+
+          <div class="field">
+            <label>Contrôle technique :</label>
+            <input type="date" class="ct-input" data-engin="${escapeAttr(name)}" />
+          </div>
+        `;
+        enginsContainer.appendChild(card);
+      }
+
+      const sep = document.createElement('div');
+      sep.className = 'separator';
+      enginsContainer.appendChild(sep);
+
+      for(const name of vehiclesKiloOnly){
+        const card = document.createElement('div');
+        card.className = 'engin-card';
+        card.id = `engin-card-${encodeId(name)}`;
+        card.innerHTML = `
+          <div class="title">${escapeHtml(name)}</div>
+
+          <div class="kilo-row">
+            <label style="min-width:120px;font-weight:700;">Kilométrage :</label>
+            <input type="number" min="0" step="1" class="kilo-input" data-engin="${escapeAttr(name)}" placeholder="km" />
+          </div>
+        `;
+        enginsContainer.appendChild(card);
+      }
+
+      attachEnginHandlers();
+      kilometrageRendered = true;
+    }
+
+    // helpers
+    function encodeId(name){ return encodeURIComponent(name).replace(/%/g,'_'); }
+    function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function escapeAttr(s){ return String(s).replace(/"/g,'&quot;'); }
+
+    // attach handlers for kilom/plein/ct
+    function attachEnginHandlers(){
+      const all = vehiclesWithPlein.concat(vehiclesKiloOnly);
+      for(const name of all){
+        const key = name;
+        const path = enginPath(key);
+        const kiloEl = document.querySelector(`.kilo-input[data-engin="${escapeAttr(key)}"]`);
+        const pleinEl = document.querySelector(`.plein-slider[data-engin="${escapeAttr(key)}"]`);
+        const ctEl = document.querySelector(`.ct-input[data-engin="${escapeAttr(key)}"]`);
+
+        try {
+          onValue(ref(db, path), (snap) => {
+            const v = snap.val() || {};
+            store.engins[key] = {
+              Kilometrage: v.Kilometrage ?? '',
+              Plein: (v.Plein ?? (vehiclesWithPlein.includes(key) ? '0' : '')),
+              CT: v.CT ?? ''
+            };
+            if (kiloEl) {
+              const val = store.engins[key].Kilometrage ?? '';
+              if (String(kiloEl.value) !== String(val) && document.activeElement !== kiloEl) kiloEl.value = val;
+            }
+            if (pleinEl && v.Plein !== undefined) {
+              const pv = String(v.Plein || '0');
+              if (String(pleinEl.value) !== pv && document.activeElement !== pleinEl) pleinEl.value = pv;
+            }
+            if (ctEl) {
+              const storedCT = store.engins[key].CT || '';
+              const inputVal = displayToDateInput(storedCT);
+              if (ctEl.value !== inputVal && document.activeElement !== ctEl) ctEl.value = inputVal;
+            }
+            checkUpcomingCTsAndNotify(false);
+          });
+        } catch(err){ console.error('onValue engin', key, err); }
+
+        const debounceWrite = (fn, wait=300) => { let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait); }; };
+
+        if (kiloEl){
+          const onKiloChange = debounceWrite(async (ev) => {
+            const v = (ev.target.value || '').toString();
+            try { await update(ref(db, path), { Kilometrage: v }); await setIGPDateToToday(); } catch(err){ console.error('save kilom', key, err); }
+          }, 300);
+          kiloEl.addEventListener('input', onKiloChange);
+          kiloEl.addEventListener('change', onKiloChange);
+        }
+
+        if (pleinEl){
+          const onPleinChange = debounceWrite(async (ev) => {
+            const v = (ev.target.value || '').toString();
+            try { await update(ref(db, path), { Plein: v }); await setIGPDateToToday(); } catch(err){ console.error('save plein', key, err); }
+          }, 200);
+          pleinEl.addEventListener('input', onPleinChange);
+          pleinEl.addEventListener('change', onPleinChange);
+        }
+
+        if (ctEl){
+          const onCtChange = debounceWrite(async (ev) => {
+            const inputVal = ev.target.value || '';
+            const displayVal = dateInputToDisplay(inputVal);
+            try { await update(ref(db, path), { CT: displayVal }); await setIGPDateToToday(); } catch(err){ console.error('save ct', key, err); }
+          }, 300);
+          ctEl.addEventListener('change', onCtChange);
+          ctEl.addEventListener('input', onCtChange);
         }
       }
+    }
+
+    // Check upcoming CTs and display notifications/highlight fields
+    function checkUpcomingCTsAndNotify(callNotify = true){
+      igpAlerts.innerHTML = '';
+      const messages = [];
+      const now = new Date();
+      const oneMonthLater = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate());
+      const allVehicles = vehiclesWithPlein.concat(vehiclesKiloOnly);
+      for(const name of allVehicles){
+        const item = store.engins[name] || {};
+        const ctDisplay = (item.CT || '').trim();
+        if (!ctDisplay) continue;
+        const parts = ctDisplay.split('/');
+        if (parts.length !== 3) continue;
+        const d = parseInt(parts[0],10);
+        const m = parseInt(parts[1],10) - 1;
+        const y = parseInt(parts[2],10);
+        const ctDate = new Date(y, m, d);
+        if (isNaN(ctDate)) continue;
+        const startOfDayNow = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const startOfCT = new Date(ctDate.getFullYear(), ctDate.getMonth(), ctDate.getDate());
+        if (startOfCT >= startOfDayNow && startOfCT <= oneMonthLater){
+          messages.push({ name, text: `ATTENTION : Contrôle Technique "${name}" arrive à échéance le ${ctDisplay}.` , date: ctDisplay});
+        }
+      }
+
+      document.querySelectorAll('.ct-input').forEach(el => el.classList.remove('ct-highlight'));
+
+      if (messages.length === 0){ igpAlerts.innerHTML = ''; return; }
+
+      messages.forEach(m => {
+        const div = document.createElement('div');
+        div.textContent = m.text;
+        igpAlerts.appendChild(div);
+      });
+
+      messages.forEach(m => {
+        const ctEl = document.querySelector(`.ct-input[data-engin="${escapeAttr(m.name)}"]`);
+        if (ctEl) ctEl.classList.add('ct-highlight');
+      });
+    }
+
+    // Cadres/Biolines
+    function cadrePath(n){ return `Cadre/${n}`; }
+    function biolinePath(n){ return `Bioline/${n}`; }
+    function defaultBiolinePressureForIndex(idx){ return (idx === 3 || idx === 5) ? '200' : '300'; }
+
+    async function ensureNodes(){
+      for(let i=1;i<=10;i++){
+        try{
+          const snap = await get(ref(db, cadrePath(i)));
+          if (!snap.exists()) await set(ref(db, cadrePath(i)), { Localisation: '', Pression: '', State: 'default', Surveillance: '' });
+          else {
+            const v = snap.val() || {};
+            if (v.Surveillance === undefined) await update(ref(db, cadrePath(i)), { Surveillance: '' });
+            if (v.Pression === undefined) await update(ref(db, cadrePath(i)), { Pression: '' });
+          }
+        } catch(err){ console.error('ensureNodes cadre', i, err); }
+      }
       for(let i=1;i<=5;i++){
-        const snap = await get(ref(db, biolinePath(i)));
-        if (!snap.exists()){
-          const defaultPress = (i===3 || i===5) ? { G: '200', D: '200' } : { G: '', D: '' };
-          await set(ref(db, biolinePath(i)), { Localisation: '', Pression: defaultPress, State: 'default', Surveillance: '' });
-        } else {
-          const v = snap.val() || {};
-          if (v.Surveillance === undefined) await update(ref(db, biolinePath(i)), { Surveillance: '' });
-          if (v.Pression === undefined) {
+        try{
+          const snap = await get(ref(db, biolinePath(i)));
+          if (!snap.exists()){
             const defaultPress = (i===3 || i===5) ? { G: '200', D: '200' } : { G: '', D: '' };
-            await update(ref(db, biolinePath(i)), { Pression: defaultPress });
+            await set(ref(db, biolinePath(i)), { Localisation: '', Pression: defaultPress, State: 'default', Surveillance: '' });
           } else {
-            if (typeof v.Pression === 'string' || typeof v.Pression === 'number') {
-              const val = String(v.Pression || '');
-              const defaultPress = (i===3 || i===5) ? { G: '200', D: '200' } : { G: val, D: val };
+            const v = snap.val() || {};
+            if (v.Surveillance === undefined) await update(ref(db, biolinePath(i)), { Surveillance: '' });
+            if (v.Pression === undefined){
+              const defaultPress = (i===3 || i===5) ? { G: '200', D: '200' } : { G: '', D: '' };
               await update(ref(db, biolinePath(i)), { Pression: defaultPress });
             } else {
-              const g = v.Pression.G ?? ((i===3||i===5)? '200' : '');
-              const d = v.Pression.D ?? ((i===3||i===5)? '200' : '');
-              await update(ref(db, biolinePath(i)), { Pression: { G: g, D: d } });
+              if (typeof v.Pression === 'string' || typeof v.Pression === 'number'){
+                const val = String(v.Pression || '');
+                const defaultPress = (i===3 || i===5) ? { G: '200', D: '200' } : { G: val, D: val };
+                await update(ref(db, biolinePath(i)), { Pression: defaultPress });
+              } else {
+                const g = v.Pression.G ?? ((i===3||i===5)? '200' : '');
+                const d = v.Pression.D ?? ((i===3||i===5)? '200' : '');
+                await update(ref(db, biolinePath(i)), { Pression: { G: g, D: d } });
+              }
             }
           }
-        }
+        } catch(err){ console.error('ensureNodes bioline', i, err); }
       }
     }
     ensureNodes().catch(console.error);
 
-    // Build UI
-    for(let i=1;i<=10;i++){
-      store.cadres[i] = { Localisation:'', Pression:'', State:'default', Surveillance: '' };
-      const btn = document.createElement('button');
-      btn.className = 'small-btn state-default';
-      btn.id = `cadre-${i}`;
-      btn.innerHTML = `<div>Cadre n°${i}</div><div class="meta-vertical" id="meta-cadre-${i}"></div>`;
-      btn.dataset.idx = i;
-      btn.addEventListener('click', ()=> openPanel('Cadre', i));
-      cadresGrid.appendChild(btn);
+    // Build Cadres/Biolines UI and listeners
+    function renderCadresAndBiolines(){
+      if (cadresGrid.childElementCount === 10 && biolinesGrid.childElementCount === 5) return;
+      cadresGrid.innerHTML = '';
+      biolinesGrid.innerHTML = '';
+
+      for(let i=1;i<=10;i++){
+        store.cadres[i] = { Localisation:'', Pression:'', State:'default', Surveillance: '' };
+        const btn = document.createElement('button');
+        btn.className = 'small-btn state-default';
+        btn.id = `cadre-${i}`;
+        btn.innerHTML = `<div>Cadre n°${i}</div><div class="meta-vertical" id="meta-cadre-${i}"></div>`;
+        btn.dataset.idx = i;
+        btn.addEventListener('click', ()=> openPanel('Cadre', i));
+        cadresGrid.appendChild(btn);
+      }
+
+      for(let i=1;i<=5;i++){
+        store.biolines[i] = { Localisation:'', Pression:{G:'',D:''}, State:'default', Surveillance: '' };
+        const btn = document.createElement('button');
+        btn.className = 'small-btn state-default';
+        btn.id = `bioline-${i}`;
+        btn.innerHTML = `<div>Bioline n°${i}</div><div class="meta-vertical" id="meta-bioline-${i}"></div>`;
+        btn.dataset.idx = i;
+        btn.addEventListener('click', ()=> openPanel('Bioline', i));
+        biolinesGrid.appendChild(btn);
+      }
+
+      for(let i=1;i<=10;i++){
+        const r = ref(db, `Cadre/${i}`);
+        onValue(r, (snap) => {
+          const v = snap.val() || {};
+          store.cadres[i].Localisation = v.Localisation ?? '';
+          store.cadres[i].Pression = v.Pression ?? '';
+          store.cadres[i].State = v.State ?? (store.cadres[i].State || 'default');
+          store.cadres[i].Surveillance = v.Surveillance ?? '';
+          refreshCadreUI(i);
+          if (activeType === 'Cadre' && activeIdx === i) refreshActionButton();
+        });
+      }
+
+      for(let i=1;i<=5;i++){
+        const r = ref(db, `Bioline/${i}`);
+        onValue(r, (snap) => {
+          const v = snap.val() || {};
+          store.biolines[i].Localisation = v.Localisation ?? '';
+          if (v.Pression && typeof v.Pression === 'object') store.biolines[i].Pression = { G: String(v.Pression.G ?? ''), D: String(v.Pression.D ?? '') };
+          else { const p = String(v.Pression ?? ''); store.biolines[i].Pression = { G: p, D: p }; }
+          store.biolines[i].State = v.State ?? (store.biolines[i].State || 'default');
+          store.biolines[i].Surveillance = v.Surveillance ?? '';
+          refreshBiolineUI(i);
+          if (activeType === 'Bioline' && activeIdx === i) refreshActionButton();
+        });
+      }
     }
 
-    for(let i=1;i<=5;i++){
-      store.biolines[i] = { Localisation:'', Pression:{G:'',D:''}, State:'default', Surveillance: '' };
-      const btn = document.createElement('button');
-      btn.className = 'small-btn state-default';
-      btn.id = `bioline-${i}`;
-      btn.innerHTML = `<div>Bioline n°${i}</div><div class="meta-vertical" id="meta-bioline-${i}"></div>`;
-      btn.dataset.idx = i;
-      btn.addEventListener('click', ()=> openPanel('Bioline', i));
-      biolinesGrid.appendChild(btn);
-    }
-
-    // Realtime listeners
-    for(let i=1;i<=10;i++){
-      const r = ref(db, `Cadre/${i}`);
-      onValue(r, (snap) => {
-        const v = snap.val() || {};
-        store.cadres[i].Localisation = v.Localisation ?? '';
-        store.cadres[i].Pression = v.Pression ?? '';
-        store.cadres[i].State = v.State ?? (store.cadres[i].State || 'default');
-        store.cadres[i].Surveillance = v.Surveillance ?? '';
-        refreshCadreUI(i);
-        if (activeType === 'Cadre' && activeIdx === i) refreshActionButton();
-      });
-    }
-
-    for(let i=1;i<=5;i++){
-      const r = ref(db, `Bioline/${i}`);
-      onValue(r, (snap) => {
-        const v = snap.val() || {};
-        store.biolines[i].Localisation = v.Localisation ?? '';
-        if (v.Pression && typeof v.Pression === 'object') {
-          store.biolines[i].Pression = { G: String(v.Pression.G ?? ''), D: String(v.Pression.D ?? '') };
-        } else {
-          const p = String(v.Pression ?? '');
-          store.biolines[i].Pression = { G: p, D: p };
-        }
-        store.biolines[i].State = v.State ?? (store.biolines[i].State || 'default');
-        store.biolines[i].Surveillance = v.Surveillance ?? '';
-        refreshBiolineUI(i);
-        if (activeType === 'Bioline' && activeIdx === i) refreshActionButton();
-      });
-    }
-
-    // UI refresh functions
     function refreshCadreUI(i){
       const d = store.cadres[i];
       const btn = document.getElementById(`cadre-${i}`);
       const meta = document.getElementById(`meta-cadre-${i}`);
-      if (d.State === 'disponible' || d.State === 'default') {
-        meta.innerHTML = '';
-      } else {
+      if (!btn || !meta) return;
+      if (d.State === 'disponible' || d.State === 'default') meta.innerHTML = '';
+      else {
         const lines = [];
         if (d.Localisation) lines.push(`Localisation: ${d.Localisation}`);
         if (d.Pression) lines.push(`Pression: ${d.Pression}`);
         meta.innerHTML = lines.map(l=>`<div>${l}</div>`).join('');
       }
       btn.classList.remove('state-default','state-delivered','state-gonflage','state-disponible','state-hs');
-      const existingBadge = btn.querySelector('.surv-badge');
-      if (existingBadge) existingBadge.remove();
+      const existingBadge = btn.querySelector('.surv-badge'); if (existingBadge) existingBadge.remove();
       if (d.State === 'delivered') btn.classList.add('state-delivered');
       else if (d.State === 'gonflage') btn.classList.add('state-gonflage');
       else if (d.State === 'disponible') btn.classList.add('state-disponible');
       else if (d.State === 'HS') btn.classList.add('state-hs');
       else btn.classList.add('state-default');
-      if (d.Surveillance && d.Surveillance.trim() !== '') {
-        const badge = document.createElement('div');
-        badge.className = 'surv-badge';
-        badge.innerHTML = `<span>!</span>`;
-        btn.appendChild(badge);
-      }
+      if (d.Surveillance && d.Surveillance.trim() !== ''){ const badge = document.createElement('div'); badge.className = 'surv-badge'; badge.innerHTML = `<span>!</span>`; btn.appendChild(badge); }
     }
 
     function refreshBiolineUI(i){
       const d = store.biolines[i];
       const btn = document.getElementById(`bioline-${i}`);
       const meta = document.getElementById(`meta-bioline-${i}`);
-      if (d.State === 'disponible' || d.State === 'default') {
-        meta.innerHTML = '';
-      } else {
+      if (!btn || !meta) return;
+      if (d.State === 'disponible' || d.State === 'default') meta.innerHTML = '';
+      else {
         const lines = [];
         if (d.Localisation) lines.push(`Localisation: ${d.Localisation}`);
         const g = d.Pression && d.Pression.G ? d.Pression.G : '';
@@ -488,26 +954,18 @@
         meta.innerHTML = lines.map(l=>`<div>${l}</div>`).join('');
       }
       btn.classList.remove('state-default','state-delivered','state-gonflage','state-disponible','state-hs');
-      const existingBadge = btn.querySelector('.surv-badge');
-      if (existingBadge) existingBadge.remove();
+      const existingBadge = btn.querySelector('.surv-badge'); if (existingBadge) existingBadge.remove();
       if (d.State === 'delivered') btn.classList.add('state-delivered');
       else if (d.State === 'gonflage') btn.classList.add('state-gonflage');
       else if (d.State === 'disponible') btn.classList.add('state-disponible');
       else if (d.State === 'HS') btn.classList.add('state-hs');
       else btn.classList.add('state-default');
-      if (d.Surveillance && d.Surveillance.trim() !== '') {
-        const badge = document.createElement('div');
-        badge.className = 'surv-badge';
-        badge.innerHTML = `<span>!</span>`;
-        btn.appendChild(badge);
-      }
+      if (d.Surveillance && d.Surveillance.trim() !== ''){ const badge = document.createElement('div'); badge.className = 'surv-badge'; badge.innerHTML = `<span>!</span>`; btn.appendChild(badge); }
     }
 
-    // Modal state
+    // Modal and interactions for cadres/biolines (code inchangé)
     let activeType = null;
     let activeIdx = null;
-
-    // temp restore variables
     let tempPrevLocalisation = null;
     let tempPrevPression = null;
     let tempPrevPressionG = null;
@@ -522,311 +980,265 @@
       activeIdx = idx;
       const d = (type === 'Cadre') ? store.cadres[idx] : store.biolines[idx];
       panelTitle.textContent = `${type} n°${idx}`;
-
       localisationInput.value = (d.Localisation || '').toString().toUpperCase();
-
       if (type === 'Bioline') {
         pressionCadreField.classList.add('hidden');
         pressionBiolineField.classList.remove('hidden');
         pressionG.value = (d.Pression && d.Pression.G) ? d.Pression.G : '';
         pressionD.value = (d.Pression && d.Pression.D) ? d.Pression.D : '';
-        tempPrevPressionG = pressionG.value;
-        tempPrevPressionD = pressionD.value;
-        hasClearedPressionG = false;
-        hasClearedPressionD = false;
+        tempPrevPressionG = pressionG.value; tempPrevPressionD = pressionD.value; hasClearedPressionG = false; hasClearedPressionD = false;
       } else {
         pressionBiolineField.classList.add('hidden');
         pressionCadreField.classList.remove('hidden');
         pressionInput.value = d.Pression || '';
-        tempPrevPression = pressionInput.value;
-        hasClearedPression = false;
+        tempPrevPression = pressionInput.value; hasClearedPression = false;
       }
-
       survInput.value = formatSurveillanceForInput(d.Surveillance || '');
-
-      tempPrevLocalisation = localisationInput.value;
-      hasClearedLocalisation = false;
-
+      tempPrevLocalisation = localisationInput.value; hasClearedLocalisation = false;
       refreshActionButton();
       hsBtn.classList.remove('hidden');
-      modal.style.display = 'flex';
-      modal.setAttribute('aria-hidden','false');
-      setTimeout(()=> {
-        if (type === 'Bioline') pressionG.focus();
-        else pressionInput.focus();
-      },50);
+      modal.style.display = 'flex'; modal.setAttribute('aria-hidden','false');
+      setTimeout(()=> { if (type === 'Bioline') pressionG.focus(); else pressionInput.focus(); },50);
     }
 
-    function closePanel(){
-      modal.style.display = 'none';
-      modal.setAttribute('aria-hidden','true');
-      activeType = null;
-      activeIdx = null;
-      tempPrevLocalisation = null;
-      tempPrevPression = null;
-      tempPrevPressionG = null;
-      tempPrevPressionD = null;
-      hasClearedLocalisation = false;
-      hasClearedPression = false;
-      hasClearedPressionG = false;
-      hasClearedPressionD = false;
-      hsBtn.classList.add('hidden');
-    }
+    function closePanel(){ modal.style.display = 'none'; modal.setAttribute('aria-hidden','true'); activeType = null; activeIdx = null; tempPrevLocalisation = null; tempPrevPression = null; tempPrevPressionG = null; tempPrevPressionD = null; hasClearedLocalisation = false; hasClearedPression = false; hasClearedPressionG = false; hasClearedPressionD = false; hsBtn.classList.add('hidden'); }
 
     function debounce(fn, wait=300){ let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), wait); }; }
+    const liveWrite = debounce(async (type, idx, field, value) => { try { const path = (type === 'Cadre') ? `Cadre/${idx}` : `Bioline/${idx}`; const obj = {}; obj[field] = value; await update(ref(db, path), obj); } catch(err){ console.error('liveWrite', err); } }, 300);
 
-    const liveWrite = debounce(async (type, idx, field, value) => {
-      try {
-        const path = (type === 'Cadre') ? `Cadre/${idx}` : `Bioline/${idx}`;
-        const obj = {}; obj[field] = value;
-        await update(ref(db, path), obj);
-      } catch(err){ console.error('liveWrite', err); }
-    }, 300);
-
-    // HS button click
     hsBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       if (!activeType || !activeIdx) return;
-      const type = activeType;
-      const idx = activeIdx;
-      const path = (type === 'Cadre') ? `Cadre/${idx}` : `Bioline/${idx}`;
+      const type = activeType; const idx = activeIdx; const path = (type === 'Cadre') ? `Cadre/${idx}` : `Bioline/${idx}`;
       closePanel();
       try {
-        if (type === 'Bioline') {
-          await update(ref(db, path), { State: 'HS', Localisation: 'HS', Pression: { G: '0', D: '0' } });
-        } else {
-          await update(ref(db, path), { State: 'HS', Localisation: 'HS', Pression: '0' });
-        }
+        if (type === 'Bioline') await update(ref(db, path), { State: 'HS', Localisation: 'HS', Pression: { G: '0', D: '0' } });
+        else await update(ref(db, path), { State: 'HS', Localisation: 'HS', Pression: '0' });
       } catch(err){ console.error('hsBtn', err); }
     });
 
-    // Localisation handlers
-    localisationInput.addEventListener('focus', (e) => {
-      if (!activeType || !activeIdx) return;
-      if (!hasClearedLocalisation) {
-        tempPrevLocalisation = localisationInput.value;
-        localisationInput.value = '';
-        hasClearedLocalisation = true;
-      }
-    });
-    localisationInput.addEventListener('blur', (e) => {
-      if (!activeType || !activeIdx) return;
-      const v = (e.target.value || '').trim();
-      if (v === '' && tempPrevLocalisation !== null) {
-        localisationInput.value = tempPrevLocalisation;
-        hasClearedLocalisation = false;
-      }
-    });
-    localisationInput.addEventListener('input', (e) => {
-      if (!activeType || !activeIdx) return;
-      const raw = e.target.value || '';
-      const v = raw.toUpperCase();
-      if (e.target.value !== v) e.target.value = v;
-      if (activeType === 'Cadre') store.cadres[activeIdx].Localisation = v;
-      else store.biolines[activeIdx].Localisation = v;
-      liveWrite(activeType, activeIdx, 'Localisation', v);
-    });
+    localisationInput.addEventListener('focus', (e) => { if (!activeType || !activeIdx) return; if (!hasClearedLocalisation) { tempPrevLocalisation = localisationInput.value; localisationInput.value = ''; hasClearedLocalisation = true; } });
+    localisationInput.addEventListener('blur', (e) => { if (!activeType || !activeIdx) return; const v = (e.target.value || '').trim(); if (v === '' && tempPrevLocalisation !== null) { localisationInput.value = tempPrevLocalisation; hasClearedLocalisation = false; } });
+    localisationInput.addEventListener('input', (e) => { if (!activeType || !activeIdx) return; const raw = e.target.value || ''; const v = raw.toUpperCase(); if (e.target.value !== v) e.target.value = v; if (activeType === 'Cadre') store.cadres[activeIdx].Localisation = v; else store.biolines[activeIdx].Localisation = v; liveWrite(activeType, activeIdx, 'Localisation', v); });
 
-    // Pression (cadre) handlers
-    pressionInput.addEventListener('focus', (e) => {
-      if (!activeType || !activeIdx) return;
-      if (!hasClearedPression) {
-        tempPrevPression = pressionInput.value;
-        pressionInput.value = '';
-        hasClearedPression = true;
-      }
-    });
-    pressionInput.addEventListener('blur', (e) => {
-      if (!activeType || !activeIdx) return;
-      const v = (e.target.value || '').trim();
-      if (v === '' && tempPrevPression !== null) {
-        pressionInput.value = tempPrevPression;
-        hasClearedPression = false;
-      }
-    });
-    pressionInput.addEventListener('input', (e) => {
-      if (!activeType || !activeIdx) return;
-      const v = e.target.value;
-      if (activeType === 'Cadre') store.cadres[activeIdx].Pression = v;
-      liveWrite('Cadre', activeIdx, 'Pression', v);
-    });
+    pressionInput.addEventListener('focus', (e) => { if (!activeType || !activeIdx) return; if (!hasClearedPression) { tempPrevPression = pressionInput.value; pressionInput.value = ''; hasClearedPression = true; } });
+    pressionInput.addEventListener('blur', (e) => { if (!activeType || !activeIdx) return; const v = (e.target.value || '').trim(); if (v === '' && tempPrevPression !== null) { pressionInput.value = tempPrevPression; hasClearedPression = false; } });
+    pressionInput.addEventListener('input', (e) => { if (!activeType || !activeIdx) return; const v = e.target.value; if (activeType === 'Cadre') store.cadres[activeIdx].Pression = v; liveWrite('Cadre', activeIdx, 'Pression', v); });
 
-    // Pression G/D (bioline) handlers
-    pressionG.addEventListener('focus', (e) => {
-      if (!activeType || !activeIdx) return;
-      if (!hasClearedPressionG) {
-        tempPrevPressionG = pressionG.value;
-        pressionG.value = '';
-        hasClearedPressionG = true;
-      }
-    });
-    pressionG.addEventListener('blur', (e) => {
-      if (!activeType || !activeIdx) return;
-      const v = (e.target.value || '').trim();
-      if (v === '' && tempPrevPressionG !== null) {
-        pressionG.value = tempPrevPressionG;
-        hasClearedPressionG = false;
-      }
-    });
-    pressionG.addEventListener('input', (e) => {
-      if (!activeType || !activeIdx) return;
-      const v = e.target.value;
-      if (activeType === 'Bioline') store.biolines[activeIdx].Pression.G = v;
-      const pressObj = { G: String(pressionG.value || ''), D: String(pressionD.value || '') };
-      liveWrite('Bioline', activeIdx, 'Pression', pressObj);
-    });
+    pressionG.addEventListener('focus', (e) => { if (!activeType || !activeIdx) return; if (!hasClearedPressionG) { tempPrevPressionG = pressionG.value; pressionG.value = ''; hasClearedPressionG = true; } });
+    pressionG.addEventListener('blur', (e) => { if (!activeType || !activeIdx) return; const v = (e.target.value || '').trim(); if (v === '' && tempPrevPressionG !== null) { pressionG.value = tempPrevPressionG; hasClearedPressionG = false; } });
+    pressionG.addEventListener('input', (e) => { if (!activeType || !activeIdx) return; const v = e.target.value; if (activeType === 'Bioline') store.biolines[activeIdx].Pression.G = v; const pressObj = { G: String(pressionG.value || ''), D: String(pressionD.value || '') }; liveWrite('Bioline', activeIdx, 'Pression', pressObj); });
 
-    pressionD.addEventListener('focus', (e) => {
-      if (!activeType || !activeIdx) return;
-      if (!hasClearedPressionD) {
-        tempPrevPressionD = pressionD.value;
-        pressionD.value = '';
-        hasClearedPressionD = true;
-      }
-    });
-    pressionD.addEventListener('blur', (e) => {
-      if (!activeType || !activeIdx) return;
-      const v = (e.target.value || '').trim();
-      if (v === '' && tempPrevPressionD !== null) {
-        pressionD.value = tempPrevPressionD;
-        hasClearedPressionD = false;
-      }
-    });
-    pressionD.addEventListener('input', (e) => {
-      if (!activeType || !activeIdx) return;
-      const v = e.target.value;
-      if (activeType === 'Bioline') store.biolines[activeIdx].Pression.D = v;
-      const pressObj = { G: String(pressionG.value || ''), D: String(pressionD.value || '') };
-      liveWrite('Bioline', activeIdx, 'Pression', pressObj);
-    });
+    pressionD.addEventListener('focus', (e) => { if (!activeType || !activeIdx) return; if (!hasClearedPressionD) { tempPrevPressionD = pressionD.value; pressionD.value = ''; hasClearedPressionD = true; } });
+    pressionD.addEventListener('blur', (e) => { if (!activeType || !activeIdx) return; const v = (e.target.value || '').trim(); if (v === '' && tempPrevPressionD !== null) { pressionD.value = tempPrevPressionD; hasClearedPressionD = false; } });
+    pressionD.addEventListener('input', (e) => { if (!activeType || !activeIdx) return; const v = e.target.value; if (activeType === 'Bioline') store.biolines[activeIdx].Pression.D = v; const pressObj = { G: String(pressionG.value || ''), D: String(pressionD.value || '') }; liveWrite('Bioline', activeIdx, 'Pression', pressObj); });
 
-    // Surveillance helpers
-    function formatSurveillanceForInput(s){
-      if (!s) return '';
-      const trim = s.trim();
-      if (trim === '') return '';
-      return trim.charAt(0).toUpperCase() + trim.slice(1);
-    }
-    function normalizeSurveillanceForStore(s){
-      if (!s) return '';
-      return s.trim();
-    }
+    function formatSurveillanceForInput(s){ if (!s) return ''; const trim = s.trim(); if (trim === '') return ''; return trim.charAt(0).toUpperCase() + trim.slice(1); }
+    function normalizeSurveillanceForStore(s){ if (!s) return ''; return s.trim(); }
 
-    survInput.addEventListener('input', (e) => {
-      if (!activeType || !activeIdx) return;
-      const raw = e.target.value || '';
-      const display = raw.length > 0 ? raw.charAt(0).toUpperCase() + raw.slice(1) : '';
-      if (e.target.value !== display) e.target.value = display;
-      const v = normalizeSurveillanceForStore(display);
-      if (activeType === 'Cadre') store.cadres[activeIdx].Surveillance = v;
-      else store.biolines[activeIdx].Surveillance = v;
-      liveWrite(activeType, activeIdx, 'Surveillance', v);
-    });
+    survInput.addEventListener('input', (e) => { if (!activeType || !activeIdx) return; const raw = e.target.value || ''; const display = raw.length > 0 ? raw.charAt(0).toUpperCase() + raw.slice(1) : ''; if (e.target.value !== display) e.target.value = display; const v = normalizeSurveillanceForStore(display); if (activeType === 'Cadre') store.cadres[activeIdx].Surveillance = v; else store.biolines[activeIdx].Surveillance = v; liveWrite(activeType, activeIdx, 'Surveillance', v); });
 
-    // Clear surveillance
-    clearSurvBtn.addEventListener('click', async (e) => {
-      e.preventDefault();
-      if (!activeType || !activeIdx) return;
-      const path = (activeType === 'Cadre') ? `Cadre/${activeIdx}` : `Bioline/${activeIdx}`;
-      survInput.value = '';
-      try { await update(ref(db, path), { Surveillance: '' }); } catch(err){ console.error('clearSurv', err); }
-    });
+    clearSurvBtn.addEventListener('click', async (e) => { e.preventDefault(); if (!activeType || !activeIdx) return; const path = (activeType === 'Cadre') ? `Cadre/${activeIdx}` : `Bioline/${activeIdx}`; survInput.value = ''; try { await update(ref(db, path), { Surveillance: '' }); } catch(err){ console.error('clearSurv', err); } });
 
-    // Valider: write fields and close modal; restore if empty
     validerBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       if (!activeType || !activeIdx) return;
-      const type = activeType;
-      const idx = activeIdx;
-      const path = (type === 'Cadre') ? `Cadre/${idx}` : `Bioline/${idx}`;
-
+      const type = activeType; const idx = activeIdx; const path = (type === 'Cadre') ? `Cadre/${idx}` : `Bioline/${idx}`;
       let Localisation = (localisationInput.value || '').trim().toUpperCase();
       if (Localisation === '' && tempPrevLocalisation !== null) Localisation = tempPrevLocalisation;
-
       if (type === 'Cadre') {
         let Pression = (pressionInput.value || '').trim();
         if (Pression === '' && tempPrevPression !== null) Pression = tempPrevPression;
         const Surveillance = normalizeSurveillanceForStore(survInput.value || '');
         try { await update(ref(db, path), { Localisation, Pression, Surveillance }); } catch(err){ console.error('valider', err); }
       } else {
-        let G = (pressionG.value || '').trim();
-        let D = (pressionD.value || '').trim();
+        let G = (pressionG.value || '').trim(); let D = (pressionD.value || '').trim();
         if (G === '' && tempPrevPressionG !== null) G = tempPrevPressionG;
         if (D === '' && tempPrevPressionD !== null) D = tempPrevPressionD;
         const Surveillance = normalizeSurveillanceForStore(survInput.value || '');
         try { await update(ref(db, path), { Localisation, Pression: { G: String(G), D: String(D) }, Surveillance }); } catch(err){ console.error('valider', err); }
       }
-
       closePanel();
     });
 
-    // Action button: transitions and set default pressures for biolines 3/5 to 200 when becoming available
     actionBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       if (!activeType || !activeIdx) return;
-      const type = activeType;
-      const idx = activeIdx;
-      const cur = (type === 'Cadre') ? { ...store.cadres[idx] } : { ...store.biolines[idx] };
+      const type = activeType; const idx = activeIdx; const cur = (type === 'Cadre') ? { ...store.cadres[idx] } : { ...store.biolines[idx] };
       closePanel();
       const path = (type === 'Cadre') ? `Cadre/${idx}` : `Bioline/${idx}`;
       try {
-        if (cur.State === 'default' || cur.State === 'disponible' || !cur.State) {
-          await update(ref(db, path), { State: 'delivered' });
-          return;
-        }
+        if (cur.State === 'default' || cur.State === 'disponible' || !cur.State) { await update(ref(db, path), { State: 'delivered' }); return; }
         if (cur.State === 'delivered') {
-          if (type === 'Bioline') {
-            const newLoc = 'CT';
-            await update(ref(db, path), { State: 'gonflage', Localisation: newLoc });
-          } else {
-            const newLoc = 'VPCE / CT';
-            await update(ref(db, path), { State: 'gonflage', Localisation: newLoc });
-          }
+          if (type === 'Bioline') { const newLoc = 'CT'; await update(ref(db, path), { State: 'gonflage', Localisation: newLoc }); }
+          else { const newLoc = 'VPCE / CT'; await update(ref(db, path), { State: 'gonflage', Localisation: newLoc }); }
           return;
         }
         if (cur.State === 'gonflage') {
-          if (type === 'Bioline') {
-            const pressureDefault = defaultBiolinePressureForIndex(idx);
-            await update(ref(db, path), { State: 'default', Pression: { G: pressureDefault, D: pressureDefault } });
-          } else {
-            await update(ref(db, path), { State: 'default', Pression: '300' });
-          }
+          if (type === 'Bioline') { const pressureDefault = defaultBiolinePressureForIndex(idx); await update(ref(db, path), { State: 'default', Pression: { G: pressureDefault, D: pressureDefault } }); }
+          else { await update(ref(db, path), { State: 'default', Pression: '300' }); }
           return;
         }
         if (cur.State === 'HS') {
-          if (type === 'Bioline') {
-            const pressureDefault = defaultBiolinePressureForIndex(idx);
-            const newLoc = 'CT';
-            await update(ref(db, path), { State: 'default', Pression: { G: pressureDefault, D: pressureDefault }, Localisation: newLoc });
-          } else {
-            await update(ref(db, path), { State: 'default', Pression: '300', Localisation: 'VPCE / CT' });
-          }
+          if (type === 'Bioline') { const pressureDefault = defaultBiolinePressureForIndex(idx); const newLoc = 'CT'; await update(ref(db, path), { State: 'default', Pression: { G: pressureDefault, D: pressureDefault }, Localisation: newLoc }); }
+          else { await update(ref(db, path), { State: 'default', Pression: '300', Localisation: 'VPCE / CT' }); }
           return;
         }
       } catch(err){ console.error('actionBtn', err); }
     });
 
-    // Refresh action button text/color
     function refreshActionButton(){
       if (!activeType || !activeIdx) return;
       const cur = (activeType === 'Cadre') ? store.cadres[activeIdx] : store.biolines[activeIdx];
       actionBtn.className = 'btn';
-      if (cur.State === 'HS' || cur.State === 'gonflage') {
-        actionBtn.textContent = 'Disponible CT';
-        actionBtn.classList.add('green');
-      } else if (cur.State === 'delivered') {
-        actionBtn.textContent = 'Gonflage';
-        actionBtn.classList.add('yellow');
-      } else {
-        actionBtn.textContent = 'Livraison';
-        actionBtn.classList.add('red');
-      }
+      if (cur.State === 'HS' || cur.State === 'gonflage') { actionBtn.textContent = 'Disponible CT'; actionBtn.classList.add('green'); }
+      else if (cur.State === 'delivered') { actionBtn.textContent = 'Gonflage'; actionBtn.classList.add('yellow'); }
+      else { actionBtn.textContent = 'Livraison'; actionBtn.classList.add('red'); }
     }
 
-    // Modal close handlers
     modal.addEventListener('click', (e) => { if (e.target === modal) closePanel(); });
     window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.style.display === 'flex') closePanel(); });
 
+    // ---------- STATUTS ENGINS (0..5, 11,12) ----------
+    async function ensureAndListenEnginStatuts(){
+      for(const name of displayedEngins){
+        const path = enginStatutPath(name);
+        try {
+          onValue(ref(db, path), async (snap) => {
+            let val = snap.val();
+            if (val === null || val === undefined){
+              try { await set(ref(db, path), "0"); val = "0"; } catch(err){ console.error('init statut', name, err); val = "0"; }
+            } else { val = String(val); }
+            store.enginStatus[name] = val;
+            applyStatutToVehicleElement(name, val);
+          });
+        } catch(err){
+          console.error('ensureAndListenEnginStatuts', name, err);
+        }
+      }
+    }
+
+    function applyStatutToVehicleElement(name, statut){
+      const el = document.querySelector(`.engins-vehicle[data-engin="${escapeAttr(name)}"]`);
+      if (!el) return;
+      el.classList.remove('engin-statut-0','engin-statut-1','engin-statut-2','engin-statut-3','engin-statut-4','engin-statut-5','engin-statut-11','engin-statut-12');
+      if (statut === '0') el.classList.add('engin-statut-0');
+      else if (statut === '1') el.classList.add('engin-statut-1');
+      else if (statut === '2') el.classList.add('engin-statut-2');
+      else if (statut === '3') el.classList.add('engin-statut-3');
+      else if (statut === '4') el.classList.add('engin-statut-4');
+      else if (statut === '5') el.classList.add('engin-statut-5');
+      else if (statut === '11') el.classList.add('engin-statut-11');
+      else if (statut === '12') el.classList.add('engin-statut-12');
+      else el.classList.add('engin-statut-0');
+    }
+
+    // Popup open/close positioned at click
+    let currentPopupEngin = null;
+    function openVehiclePopup(enginName, clientX, clientY, sourceEl){
+      currentPopupEngin = enginName;
+      vehPopupBackdrop.style.display = 'block';
+      vehPopupBackdrop.setAttribute('aria-hidden','false');
+
+      // set title
+      vehPopupTitle.textContent = enginName;
+
+      // compute position with small offset so the click isn't covered
+      const offset = 8;
+      const popup = vehPopup;
+      popup.style.display = 'flex';
+      // initial coords
+      let x = clientX + offset;
+      let y = clientY + offset;
+
+      // measure popup and viewport to avoid overflow
+      const vpW = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+      const vpH = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+      // small delay to ensure popup has layout
+      requestAnimationFrame(() => {
+        const rect = popup.getBoundingClientRect();
+        const pw = rect.width;
+        const ph = rect.height;
+        // if overflow right, move left
+        if (x + pw + 8 > vpW) x = Math.max(8, clientX - pw - offset);
+        // if overflow bottom, move up
+        if (y + ph + 8 > vpH) y = Math.max(8, clientY - ph - offset);
+        // final apply
+        popup.style.left = `${x}px`;
+        popup.style.top = `${y}px`;
+      });
+    }
+    function closeVehiclePopup(){
+      currentPopupEngin = null;
+      vehPopupBackdrop.style.display = 'none';
+      vehPopupBackdrop.setAttribute('aria-hidden','true');
+      vehPopup.style.display = 'none';
+    }
+
+    async function setEnginStatutInFirebase(name, statut){
+      try {
+        await set(ref(db, enginStatutPath(name)), String(statut));
+        store.enginStatus[name] = String(statut);
+        applyStatutToVehicleElement(name, String(statut));
+      } catch(err){
+        console.error('setEnginStatutInFirebase', name, statut, err);
+      }
+    }
+
+    // Attach synoptique click handlers (position popup at click and set title)
+    function attachSynoptiqueClickHandlers(){
+      document.querySelectorAll('.engins-vehicle').forEach(el => {
+        if (el.dataset._clickattached === '1') return;
+        el.dataset._clickattached = '1';
+        el.addEventListener('click', (e) => {
+          const name = el.dataset.engin;
+          // Stop propagation to avoid other handlers
+          e.stopPropagation();
+          openVehiclePopup(name, e.clientX, e.clientY, el);
+        });
+      });
+    }
+
+    // Popup option clicks
+    vehPopup.querySelectorAll('.opt').forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        const val = opt.dataset.val;
+        if (!currentPopupEngin) { closeVehiclePopup(); return; }
+        setEnginStatutInFirebase(currentPopupEngin, val);
+        closeVehiclePopup();
+      });
+    });
+
+    // Close popup when clicking outside or pressing Esc
+    document.addEventListener('click', (e) => {
+      // if click is outside popup and not on a vehicle, close popup
+      const insidePopup = vehPopup.contains(e.target);
+      const onVehicle = e.target.closest('.engins-vehicle');
+      if (!insidePopup && !onVehicle) closeVehiclePopup();
+    });
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && vehPopup.style.display === 'flex') closeVehiclePopup(); });
+
+    // ---------- FIN STATUTS ----------
+
+    // On load
+    window.addEventListener('load', () => {
+      const all = vehiclesWithPlein.concat(vehiclesKiloOnly);
+      Promise.all(all.map(async (name) => {
+        try {
+          const snap = await get(ref(db, enginPath(name)));
+          const v = snap.val() || {};
+          store.engins[name] = { Kilometrage: v.Kilometrage ?? '', Plein: v.Plein ?? (vehiclesWithPlein.includes(name) ? '0' : ''), CT: v.CT ?? '' };
+        } catch(e){ console.error('fetch engin on load', name, e); }
+      })).then(() => {
+        checkUpcomingCTsAndNotify(true);
+      }).catch(() => { checkUpcomingCTsAndNotify(true); });
+
+      renderCadresAndBiolines();
+
+      // attach synoptique handlers and start listening statuts
+      attachSynoptiqueClickHandlers();
+      ensureAndListenEnginStatuts();
+    });
   </script>
 </body>
 </html>
