@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Osiris - ROC</title>
+  <title>ROCSIS</title>
   <style>
     :root{
       --red:#c62828;
@@ -21,7 +21,6 @@
       --black:#000;
       --muted:#8b949e;
       --radius:12px;
-      /* nouveau jaune-orangé pour statut 2 */
       --yellow-orange: #ffd27a;
       --yellow-orange-border: #e6a93f;
       font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
@@ -157,6 +156,23 @@
     .engin-statut-11 { background: var(--black); color: #fff; border-color: #111; }
     .engin-statut-12 { background: var(--purple); color: var(--black); border-color: #6f45b0; }
 
+    /* Interventions bouton pleine largeur */
+    .intervention-btn {
+      display:block;
+      width:100%;
+      text-align:left;
+      background:var(--card);
+      border-radius:12px;
+      padding:12px 16px;
+      margin:8px 0;
+      font-weight:900;
+      color:var(--text);
+      box-shadow:0 8px 20px rgba(0,0,0,0.04);
+      cursor:pointer;
+      border:1px solid rgba(0,0,0,0.06);
+    }
+    .intervention-btn:hover { transform: translateY(-4px); box-shadow:0 18px 36px rgba(0,0,0,0.08); }
+
     @media (max-width:900px){
       .topbar .title{ font-size:1.8rem; }
       .panel{ width:min(92%,720px); }
@@ -191,7 +207,7 @@
 <body>
   <div class="topbar" role="banner">
     <div class="back hidden" id="backBtn" aria-hidden="true" title="Retour">←</div>
-    <div class="title">Osiris - ROC</div>
+    <div class="title">ROCSIS</div>
   </div>
 
   <main>
@@ -202,6 +218,7 @@
         <a class="grid-btn" id="openCadresMain" href="#" role="button">Synoptique des Cadres et Biolines</a>
         <a class="grid-btn" id="openIGPMain" href="#" role="button">IGP</a>
         <a class="grid-btn" id="openEnginsMain" href="#" role="button">Synoptique des Engins</a>
+        <a class="grid-btn" id="openInterventionsMain" href="#" role="button">Synoptique des Interventions</a>
         <a class="grid-btn" id="openArchivesMain" href="#" role="button">Interventions archivées</a>
       </div>
     </div>
@@ -297,6 +314,13 @@
       </div>
     </section>
 
+    <section id="interventionsView" class="submenu hidden" aria-label="Synoptique des Interventions">
+      <div class="subtitle">Interventions en cours</div>
+      <div id="interventionsContainer" style="color:#55606b;">
+        Pas d'intervention en cours.
+      </div>
+    </section>
+
     <section id="archivesView" class="submenu hidden" aria-label="Interventions archivées">
       <div class="subtitle">Interventions archivées</div>
       <div style="color:#55606b;">Contenu Interventions archivées — à implémenter ou brancher sur vos sources.</div>
@@ -380,11 +404,13 @@
     const openCadresMain = document.getElementById('openCadresMain');
     const openIGPMain = document.getElementById('openIGPMain');
     const openEnginsMain = document.getElementById('openEnginsMain');
+    const openInterventionsMain = document.getElementById('openInterventionsMain');
     const openArchivesMain = document.getElementById('openArchivesMain');
     const cadresView = document.getElementById('cadresView');
     const igpView = document.getElementById('igpView');
     const igpKilometrageView = document.getElementById('igpKilometrageView');
     const enginsView = document.getElementById('enginsView');
+    const interventionsView = document.getElementById('interventionsView');
     const archivesView = document.getElementById('archivesView');
     const cadresGrid = document.getElementById('cadresGrid');
     const biolinesGrid = document.getElementById('biolinesGrid');
@@ -393,6 +419,7 @@
     const igpFooter = document.getElementById('igpFooter');
     const igpAlerts = document.getElementById('igpAlerts');
     const btnKilometrageMain = document.getElementById('btnKilometrageMain');
+    const interventionsContainer = document.getElementById('interventionsContainer');
 
     const modal = document.getElementById('modal');
     const panelTitle = document.getElementById('panelTitle');
@@ -417,12 +444,12 @@
 
     function showView(viewEl) {
       home.classList.add('hidden');
-      [cadresView, igpView, igpKilometrageView, enginsView, archivesView].forEach(s => s.classList.add('hidden'));
+      [cadresView, igpView, igpKilometrageView, enginsView, interventionsView, archivesView].forEach(s => s.classList.add('hidden'));
       viewEl.classList.remove('hidden');
       backBtn.classList.remove('hidden');
     }
     function showHome() {
-      [cadresView, igpView, igpKilometrageView, enginsView, archivesView].forEach(s => s.classList.add('hidden'));
+      [cadresView, igpView, igpKilometrageView, enginsView, interventionsView, archivesView].forEach(s => s.classList.add('hidden'));
       home.classList.remove('hidden');
       backBtn.classList.add('hidden');
     }
@@ -430,6 +457,7 @@
     openCadresMain.addEventListener('click', (e)=>{ e.preventDefault(); renderCadresAndBiolines(); showView(cadresView); });
     openIGPMain.addEventListener('click', (e)=>{ e.preventDefault(); showView(igpView); });
     openEnginsMain.addEventListener('click', (e)=>{ e.preventDefault(); showView(enginsView); });
+    openInterventionsMain.addEventListener('click', (e)=>{ e.preventDefault(); showView(interventionsView); });
     openArchivesMain.addEventListener('click', (e)=>{ e.preventDefault(); showView(archivesView); });
     backBtn.addEventListener('click', (e)=>{ e.preventDefault(); showHome(); });
 
@@ -794,50 +822,76 @@
     }
 
     function refreshCadreUI(i){
-      const d = store.cadres[i];
-      const btn = document.getElementById(`cadre-${i}`);
-      const meta = document.getElementById(`meta-cadre-${i}`);
-      if (!btn || !meta) return;
-      if (d.State === 'disponible' || d.State === 'default') meta.innerHTML = '';
-      else {
-        const lines = [];
-        if (d.Localisation) lines.push(`Localisation: ${d.Localisation}`);
-        if (d.Pression) lines.push(`Pression: ${d.Pression}`);
-        meta.innerHTML = lines.map(l=>`<div>${l}</div>`).join('');
-      }
-      btn.classList.remove('state-default','state-delivered','state-gonflage','state-disponible','state-hs');
-      const existingBadge = btn.querySelector('.surv-badge'); if (existingBadge) existingBadge.remove();
-      if (d.State === 'delivered') btn.classList.add('state-delivered');
-      else if (d.State === 'gonflage') btn.classList.add('state-gonflage');
-      else if (d.State === 'disponible') btn.classList.add('state-disponible');
-      else if (d.State === 'HS') btn.classList.add('state-hs');
-      else btn.classList.add('state-default');
-      if (d.Surveillance && d.Surveillance.trim() !== ''){ const badge = document.createElement('div'); badge.className = 'surv-badge'; badge.innerHTML = `<span>!</span>`; btn.appendChild(badge); }
-    }
+  const d = store.cadres[i];
+  const btn = document.getElementById(`cadre-${i}`);
+  const meta = document.getElementById(`meta-cadre-${i}`);
+  if (!btn || !meta) return;
 
-    function refreshBiolineUI(i){
-      const d = store.biolines[i];
-      const btn = document.getElementById(`bioline-${i}`);
-      const meta = document.getElementById(`meta-bioline-${i}`);
-      if (!btn || !meta) return;
-      if (d.State === 'disponible' || d.State === 'default') meta.innerHTML = '';
-      else {
-        const lines = [];
-        if (d.Localisation) lines.push(`Localisation: ${d.Localisation}`);
-        const g = d.Pression && d.Pression.G ? d.Pression.G : '';
-        const dd = d.Pression && d.Pression.D ? d.Pression.D : '';
-        if (g || dd) lines.push(`Pression G: ${g} ; D: ${dd}`);
-        meta.innerHTML = lines.map(l=>`<div>${l}</div>`).join('');
-      }
-      btn.classList.remove('state-default','state-delivered','state-gonflage','state-disponible','state-hs');
-      const existingBadge = btn.querySelector('.surv-badge'); if (existingBadge) existingBadge.remove();
-      if (d.State === 'delivered') btn.classList.add('state-delivered');
-      else if (d.State === 'gonflage') btn.classList.add('state-gonflage');
-      else if (d.State === 'disponible') btn.classList.add('state-disponible');
-      else if (d.State === 'HS') btn.classList.add('state-hs');
-      else btn.classList.add('state-default');
-      if (d.Surveillance && d.Surveillance.trim() !== ''){ const badge = document.createElement('div'); badge.className = 'surv-badge'; badge.innerHTML = `<span>!</span>`; btn.appendChild(badge); }
-    }
+  // Toujours afficher la localisation et la pression si présentes
+  const lines = [];
+  if (d.Localisation) lines.push(`Localisation: ${d.Localisation}`);
+  if (d.Pression) lines.push(`Pression: ${d.Pression}`);
+  meta.innerHTML = lines.map(l=>`<div>${l}</div>`).join('');
+
+  btn.classList.remove(
+    'state-default','state-delivered','state-gonflage',
+    'state-disponible','state-hs'
+  );
+
+  const existingBadge = btn.querySelector('.surv-badge');
+  if (existingBadge) existingBadge.remove();
+
+  if (d.State === 'delivered') btn.classList.add('state-delivered');
+  else if (d.State === 'gonflage') btn.classList.add('state-gonflage');
+  else if (d.State === 'disponible') btn.classList.add('state-disponible');
+  else if (d.State === 'HS') btn.classList.add('state-hs');
+  else btn.classList.add('state-default');
+
+  if (d.Surveillance && d.Surveillance.trim() !== ''){
+    const badge = document.createElement('div');
+    badge.className = 'surv-badge';
+    badge.innerHTML = `<span>!</span>`;
+    btn.appendChild(badge);
+  }
+}
+
+function refreshBiolineUI(i){
+  const d = store.biolines[i];
+  const btn = document.getElementById(`bioline-${i}`);
+  const meta = document.getElementById(`meta-bioline-${i}`);
+  if (!btn || !meta) return;
+
+  // Toujours afficher localisation + pressions
+  const lines = [];
+  if (d.Localisation) lines.push(`Localisation: ${d.Localisation}`);
+
+  const g = d.Pression && d.Pression.G ? d.Pression.G : '';
+  const dd = d.Pression && d.Pression.D ? d.Pression.D : '';
+  if (g || dd) lines.push(`Pression G: ${g} ; D: ${dd}`);
+
+  meta.innerHTML = lines.map(l=>`<div>${l}</div>`).join('');
+
+  btn.classList.remove(
+    'state-default','state-delivered','state-gonflage',
+    'state-disponible','state-hs'
+  );
+
+  const existingBadge = btn.querySelector('.surv-badge');
+  if (existingBadge) existingBadge.remove();
+
+  if (d.State === 'delivered') btn.classList.add('state-delivered');
+  else if (d.State === 'gonflage') btn.classList.add('state-gonflage');
+  else if (d.State === 'disponible') btn.classList.add('state-disponible');
+  else if (d.State === 'HS') btn.classList.add('state-hs');
+  else btn.classList.add('state-default');
+
+  if (d.Surveillance && d.Surveillance.trim() !== ''){
+    const badge = document.createElement('div');
+    badge.className = 'surv-badge';
+    badge.innerHTML = `<span>!</span>`;
+    btn.appendChild(badge);
+  }
+}
 
     // Modal and interactions for cadres/biolines
     let activeType = null;
@@ -1001,14 +1055,13 @@
         'engin-statut-0','engin-statut-1','engin-statut-2','engin-statut-3','engin-statut-4','engin-statut-5','engin-statut-6',
         'engin-statut-11','engin-statut-12'
       );
-      // mapping avec décalage demandé
       if (statut === '0') el.classList.add('engin-statut-0');
       else if (statut === '1') el.classList.add('engin-statut-1');
-      else if (statut === '2') el.classList.add('engin-statut-2'); // nouveau : rouge sur jaune-orangé
-      else if (statut === '3') el.classList.add('engin-statut-3'); // ancienne 2
-      else if (statut === '4') el.classList.add('engin-statut-4'); // ancienne 3
-      else if (statut === '5') el.classList.add('engin-statut-5'); // ancienne 4
-      else if (statut === '6') el.classList.add('engin-statut-6'); // ancienne 5
+      else if (statut === '2') el.classList.add('engin-statut-2');
+      else if (statut === '3') el.classList.add('engin-statut-3');
+      else if (statut === '4') el.classList.add('engin-statut-4');
+      else if (statut === '5') el.classList.add('engin-statut-5');
+      else if (statut === '6') el.classList.add('engin-statut-6');
       else if (statut === '11') el.classList.add('engin-statut-11');
       else if (statut === '12') el.classList.add('engin-statut-12');
       else el.classList.add('engin-statut-0');
@@ -1089,6 +1142,40 @@
     });
     window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && vehPopup.style.display === 'flex') closeVehiclePopup(); });
 
+    // Listen real-time for active interventions
+    function listenActiveInterventions(){
+      try {
+        const activeRef = ref(db, 'Intervention/Active');
+        onValue(activeRef, (snap) => {
+          interventionsContainer.innerHTML = '';
+          const v = snap.val();
+          if (!v) {
+            interventionsContainer.textContent = 'Pas d\'intervention en cours.';
+            return;
+          }
+          const keys = Object.keys(v || {});
+          if (keys.length === 0) {
+            interventionsContainer.textContent = 'Pas d\'intervention en cours.';
+            return;
+          }
+          keys.forEach(k => {
+            const btn = document.createElement('button');
+            btn.className = 'intervention-btn';
+            btn.type = 'button';
+            btn.textContent = k;
+            btn.addEventListener('click', () => {
+              // action minimale: légère mise en évidence lors du clic
+              btn.style.boxShadow = '0 20px 40px rgba(0,0,0,0.12)';
+            });
+            interventionsContainer.appendChild(btn);
+          });
+        });
+      } catch(err){
+        console.error('listenActiveInterventions', err);
+        interventionsContainer.textContent = 'Erreur de lecture des interventions.';
+      }
+    }
+
     // On load
     window.addEventListener('load', () => {
       const all = vehiclesWithPlein.concat(vehiclesKiloOnly);
@@ -1106,6 +1193,9 @@
 
       attachSynoptiqueClickHandlers();
       ensureAndListenEnginStatuts();
+
+      // start listening for active interventions in real-time
+      listenActiveInterventions();
     });
   </script>
 </body>
